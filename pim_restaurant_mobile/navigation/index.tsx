@@ -4,9 +4,7 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 import LoginScreen from "../modules/login";
-import {
-  RootStackParamList,
-} from "../types";
+import TablesScreen from "../modules/tables";
 
 export default function Navigation() {
   return (
@@ -16,7 +14,7 @@ export default function Navigation() {
   );
 }
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 function RootNavigator() {
   return (
@@ -27,6 +25,7 @@ function RootNavigator() {
       }}
     >
       <Stack.Screen name="Root" component={LoginScreen} />
+      <Stack.Screen name="Tables" component={TablesScreen} />
     </Stack.Navigator>
   );
 }

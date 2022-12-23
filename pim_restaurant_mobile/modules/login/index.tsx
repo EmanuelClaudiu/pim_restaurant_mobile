@@ -1,20 +1,22 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import {
-  Alert,
-  TextInput,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, TextInput, Text, View, Pressable } from "react-native";
 import * as LoginService from "./login.service";
 import { styles } from "./styles";
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-community/async-storage';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation } : {navigation: any}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const navigation = useNavigation();
+  useEffect(() => {
+    AsyncStorage.getItem("waiterId").then((waiterId) => {
+      if (!!waiterId) {
+        navigation.navigate("Tables", {waiterId: waiterId});
+      }
+    });
+  }, []);
 
   async function handleLogin() {
     console.log("Login button pressed");
@@ -23,26 +25,31 @@ export default function LoginScreen() {
     // error handling here
     // save user to state
     Alert.alert("Success", "You are now logged in");
-    navigation.navigate("NotFound");
+    AsyncStorage.setItem("waiterId", data.toString());
+    navigation.navigate("Tables", {waiterId: data});
   }
 
   return (
     <View style={styles.container}>
-      <Text>Waiter Login</Text>
-      <TextInput
-        value={username}
-        onChangeText={setUsername}
-        placeholder="Username"
-      />
-      <TextInput
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        secureTextEntry
-      />
-      <Pressable onPress={handleLogin} style={styles.button}>
-        <Text>Log In</Text>
-      </Pressable>
+      <View style={styles.loginCard}>
+        <Text style={styles.formTitle}>Waiter Login</Text>
+        <TextInput
+          value={username}
+          onChangeText={setUsername}
+          placeholder="Username"
+          style={styles.input}
+        />
+        <TextInput
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Password"
+          style={styles.input}
+          secureTextEntry
+        />
+        <Pressable onPress={handleLogin} style={styles.button}>
+          <Text style={styles.button.text}>LOG IN</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
