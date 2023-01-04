@@ -1,9 +1,10 @@
-import { Restaurant } from "../models/restaurant/Restaurant.model";
+import { mock_sections } from './sections';
+import { Restaurant } from "../modules/tables/models/restaurant/Restaurant.model";
 
-export const restaurants : Restaurant[] = [
+export const mock_restaurants : Restaurant[] = [
     new Restaurant({
         id: 1,
-        name: 'Restaurant 1',
+        name: 'Restaurant Bella Roma',
         address: 'Via Roma 1',
         city: 'Roma',
         country: 'Italy',
@@ -12,6 +13,7 @@ export const restaurants : Restaurant[] = [
         phone: '1234567890',
         postalCode: '00100',
         province: 'Roma',
+        sections: mock_sections,
         tables: [],
         waiters: [],
         receipts: [],

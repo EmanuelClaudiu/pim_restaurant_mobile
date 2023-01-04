@@ -1,32 +1,17 @@
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
-import { Alert, TextInput, Text, View, Pressable } from "react-native";
-import * as LoginService from "./login.service";
+import { useState } from "react";
+import { TextInput, Text, View, Pressable } from "react-native";
 import { styles } from "./styles";
-import * as SecureStore from 'expo-secure-store';
-import AsyncStorage from '@react-native-community/async-storage';
+import { login } from "./reducer/auth.actions";
+import { useDispatch } from "react-redux";
 
 export default function LoginScreen({ navigation } : {navigation: any}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    AsyncStorage.getItem("waiterId").then((waiterId) => {
-      if (!!waiterId) {
-        navigation.navigate("Tables", {waiterId: waiterId});
-      }
-    });
-  }, []);
+  const dispatch = useDispatch();
 
   async function handleLogin() {
-    console.log("Login button pressed");
-    const response = await LoginService.login(username, password);
-    const data = await response;
-    // error handling here
-    // save user to state
-    Alert.alert("Success", "You are now logged in");
-    AsyncStorage.setItem("waiterId", data.toString());
-    navigation.navigate("Tables", {waiterId: data});
+    login(dispatch, username, password);
   }
 
   return (

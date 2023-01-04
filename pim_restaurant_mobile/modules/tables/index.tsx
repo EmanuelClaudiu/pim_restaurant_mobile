@@ -5,12 +5,13 @@ import * as TablesService from "./tables.service";
 import { styles } from "./styles";
 import { mock_waiters } from "../../mock_data/waiters";
 import * as SecureStore from "expo-secure-store";
-import { Waiter } from "../../models/waiter/Waiter.model";
+import { Waiter } from "../login/models/waiter/Waiter.model";
 import AsyncStorage from "@react-native-community/async-storage";
-
-export interface TableScreenProps {
-  waiterId: number;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Store";
+import { loadTables } from "./reducer/tables.actions";
+import { TABLE_STATUS } from "./models/table/table-status.enum";
+import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/Colors";
 
 export default function TablesScreen({
   route,
@@ -19,26 +20,43 @@ export default function TablesScreen({
   route: any;
   navigation: any;
 }) {
-  const [waiter, setWaiter] = useState(new Waiter({}));
+  const authState = useSelector((state: RootState) => state.auth);
+  const tableState = useSelector((state: RootState) => state.tables);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    AsyncStorage.getItem("waiterId").then((waiterId) => {
-      if (!!waiterId) {
-        setWaiter(mock_waiters[+waiterId]);
-      }
-    });
+    loadTables(dispatch, authState.restaurant);
   }, []);
 
-  return (
+  return !!tableState.tables ? (
     <View style={styles.container}>
-      <Text>Tables Screen</Text>
-      <Text>Welcome {waiter.name}</Text>
-      <Pressable onPress={() => {
-        AsyncStorage.removeItem("waiterId");
-        navigation.navigate("Root");
-      }} >
-        <Text>Log Out</Text>
-      </Pressable>
+      <Text style={styles.welcomeText}>Welcome {authState.waiter.name}</Text>
+      <Text style={styles.restaurantText}>{authState.restaurant.name}</Text>
+      <View style={styles.tablesContainer}>
+        {tableState.tables.map((table, key) => (
+          <Pressable
+            key={key}
+            onPress={() => {
+              navigation.navigate("Table", { table });
+            }}
+            style={[
+              styles.table,
+              {
+                backgroundColor:
+                  table.status === TABLE_STATUS.FREE
+                    ? $pimRestaurantGreen
+                    : $pimRestaurantRed,
+              },
+            ]}
+          >
+            <Text style={styles.text}>Table {key + 1}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  ) : (
+    <View style={styles.container}>
+      <Text style={styles.welcomeText}>Loading...</Text>
     </View>
   );
 }

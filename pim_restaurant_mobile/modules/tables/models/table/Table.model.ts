@@ -2,7 +2,7 @@ import { TABLE_STATUS } from "./table-status.enum";
 
 export class Table {
   id: number;
-  idRestaurant: string;
+  idRestaurant: number;
   status: TABLE_STATUS;
 
   constructor(table: any) {

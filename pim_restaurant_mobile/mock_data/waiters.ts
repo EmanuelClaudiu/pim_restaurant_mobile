@@ -1,4 +1,4 @@
-import { Waiter } from '../models/waiter/Waiter.model';
+import { Waiter } from '../modules/login/models/waiter/Waiter.model';
 
 export const mock_waiters : Waiter[] = [
     new Waiter({
