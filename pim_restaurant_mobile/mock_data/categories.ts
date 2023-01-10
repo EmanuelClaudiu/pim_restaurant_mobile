@@ -8,27 +8,27 @@ export const mock_categories: Category[] = [
     }),
     new Category({
         id: 2,
-        name: 'Drinks',
+        name: 'Băuturi',
         idSection: 2,
     }),
     new Category({
         id: 3,
-        name: 'Coffee',
+        name: 'Cafea',
         idSection: 2,
     }),
     new Category({
         id: 4,
-        name: 'Wines',
+        name: 'Vinuri',
         idSection: 2,
     }),
     new Category({
         id: 5,
-        name: 'Beers',
+        name: 'Bere',
         idSection: 2,
     }),
     new Category({
         id: 6,
-        name: 'Fish',
+        name: 'Pește',
         idSection: 1,
     }),
     new Category({
@@ -38,22 +38,22 @@ export const mock_categories: Category[] = [
     }),
     new Category({
         id: 8,
-        name: 'Side dishes',
+        name: 'Garnituri',
         idSection: 1,
     }),
     new Category({
         id: 9,
-        name: 'Grill',
+        name: 'Preparate la grătar',
         idSection: 2,
     }),
     new Category({
         id: 10,
-        name: 'Soups',
+        name: 'Ciorbe',
         idSection: 1,
     }),
     new Category({
         id: 11,
-        name: 'Specialities',
+        name: 'Specialități',
         idSection: 1,
     }),
 ] 

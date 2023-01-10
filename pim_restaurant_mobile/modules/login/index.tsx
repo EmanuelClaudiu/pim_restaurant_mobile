@@ -17,22 +17,22 @@ export default function LoginScreen({ navigation } : {navigation: any}) {
   return (
     <View style={styles.container}>
       <View style={styles.loginCard}>
-        <Text style={styles.formTitle}>Waiter Login</Text>
+        <Text style={styles.formTitle}>Login Ospătar</Text>
         <TextInput
           value={username}
           onChangeText={setUsername}
-          placeholder="Username"
+          placeholder="Nume de utilizator"
           style={styles.input}
         />
         <TextInput
           value={password}
           onChangeText={setPassword}
-          placeholder="Password"
+          placeholder="Parola"
           style={styles.input}
           secureTextEntry
         />
         <Pressable onPress={handleLogin} style={styles.button}>
-          <Text style={styles.button.text}>LOG IN</Text>
+          <Text style={styles.button.text}>ACCESEAZĂ</Text>
         </Pressable>
       </View>
     </View>

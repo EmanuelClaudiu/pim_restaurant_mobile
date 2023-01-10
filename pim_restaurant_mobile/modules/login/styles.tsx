@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
   formTitle: {
     color: 'white',
     fontSize: 32,
+    letterSpacing: 1.25,
   },
   input: {
     backgroundColor: 'white',
@@ -29,6 +30,7 @@ export const styles = StyleSheet.create({
     height: '32px',
     padding: '8px',
     borderRadius: 8,
+    letterSpacing: 1.2,
   },
   button: {
     backgroundColor: $pimRestaurantRed,
@@ -43,6 +45,8 @@ export const styles = StyleSheet.create({
 
     text : {
       color: 'white',
+      letterSpacing: 1.2,
+      fontWeight: '500'
     }
   }
 });

@@ -13,13 +13,15 @@ export const styles = StyleSheet.create({
     color: $pimRestaurantSilver,
     fontSize: 24,
     marginTop: $gridSize * 3,
-    marginBottom: $gridSize * 3
+    marginBottom: $gridSize * 3,
+    letterSpacing: 1.25,
   },
   restaurantText: {
     color: $pimRestaurantRed,
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: $gridSize * 3
+    marginBottom: $gridSize * 3,
+    letterSpacing: 1.25,
   },
   tablesContainer: {
     display: "flex",
@@ -44,5 +46,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     color: $pimRestaurantSilver,
+    letterSpacing: 1.25,
+    fontWeight: "500",
   },
 });

@@ -21,23 +21,23 @@ export default function TablesScreen({
   navigation: any;
 }) {
   const authState = useSelector((state: RootState) => state.auth);
-  const tableState = useSelector((state: RootState) => state.tables);
+  const tablesState = useSelector((state: RootState) => state.tables);
   const dispatch = useDispatch();
 
   useEffect(() => {
     loadTables(dispatch, authState.restaurant);
   }, []);
 
-  return !!tableState.tables ? (
+  return !!tablesState.tables ? (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome {authState.waiter.name}</Text>
+      <Text style={styles.welcomeText}>Bună {authState.waiter.name}</Text>
       <Text style={styles.restaurantText}>{authState.restaurant.name}</Text>
       <View style={styles.tablesContainer}>
-        {tableState.tables.map((table, key) => (
+        {tablesState.tables.map((table, key) => (
           <Pressable
             key={key}
             onPress={() => {
-              navigation.navigate("Table", { table });
+              navigation.navigate("Table", { table: table });
             }}
             style={[
               styles.table,
@@ -49,7 +49,7 @@ export default function TablesScreen({
               },
             ]}
           >
-            <Text style={styles.text}>Table {key + 1}</Text>
+            <Text style={styles.text}>Masa nr. {key + 1}</Text>
           </Pressable>
         ))}
       </View>

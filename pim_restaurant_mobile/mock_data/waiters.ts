@@ -3,9 +3,9 @@ import { Waiter } from '../modules/login/models/waiter/Waiter.model';
 export const mock_waiters : Waiter[] = [
     new Waiter({
         id: 1,
-        name: 'John',
-        surname: 'Doe',
-        email: 'john_doe@yahoo.com',
+        name: 'Ionuț',
+        surname: 'Vasilescu',
+        email: 'ionut_vasilescu@yahoo.com',
         password: '123456',
         idRestaurant: 1,
     }),

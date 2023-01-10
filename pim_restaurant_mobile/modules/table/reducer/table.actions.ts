@@ -10,7 +10,7 @@ export const LOAD_PRODUCTS_SUCCESS = "LOAD_PRODUCTS_SUCCESS";
 
 export const LOAD_PRODUCTS_FAILURE = "LOAD_PRODUCTS_FAILURE";
 
-export const loadTables = (dispatch: any, restaurant: Restaurant) => {
+export const loadProducts = (dispatch: any, restaurant: Restaurant) => {
     try {
       dispatch({ type: LOAD_PRODUCTS_REQUEST });
   
