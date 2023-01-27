@@ -6,7 +6,7 @@ export const mock_tables : Table[] = [
     {
         id: 1,
         idRestaurant: 1,
-        status: TABLE_STATUS.FREE
+        status: TABLE_STATUS.OCCUPIED
     },
     {
         id: 2,
@@ -26,12 +26,12 @@ export const mock_tables : Table[] = [
     {
         id: 5,
         idRestaurant: 1,
-        status: TABLE_STATUS.OCCUPIED
+        status: TABLE_STATUS.FREE
     },
     {
         id: 6,
         idRestaurant: 1,
-        status: TABLE_STATUS.FREE
+        status: TABLE_STATUS.OCCUPIED
     },
     {
         id: 7,
@@ -41,7 +41,7 @@ export const mock_tables : Table[] = [
     {
         id: 8,
         idRestaurant: 1,
-        status: TABLE_STATUS.OCCUPIED
+        status: TABLE_STATUS.FREE
     },
     {
         id: 9,
@@ -51,7 +51,7 @@ export const mock_tables : Table[] = [
     {
         id: 10,
         idRestaurant: 1,
-        status: TABLE_STATUS.OCCUPIED
+        status: TABLE_STATUS.FREE
     },
     {
         id: 11,

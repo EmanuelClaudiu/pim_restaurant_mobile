@@ -9,6 +9,7 @@ import { RootState } from "../Store";
 import AsyncStorage from "@react-native-community/async-storage";
 import TableScreen from "../modules/table";
 import { $pimRestaurantSilver } from "../constants/Colors";
+import BillScreen from "../modules/bill";
 
 export default function Navigation() {
   return (
@@ -41,6 +42,11 @@ function RootNavigator() {
           <Stack.Screen
             name="Table"
             component={TableScreen}
+            options={{ headerStyle: { backgroundColor: $pimRestaurantSilver } }}
+          />
+          <Stack.Screen
+            name="Bill"
+            component={BillScreen}
             options={{ headerStyle: { backgroundColor: $pimRestaurantSilver } }}
           />
         </>

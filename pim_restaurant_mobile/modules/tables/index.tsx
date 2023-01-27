@@ -12,6 +12,7 @@ import { RootState } from "../../Store";
 import { loadTables } from "./reducer/tables.actions";
 import { TABLE_STATUS } from "./models/table/table-status.enum";
 import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/Colors";
+import { loadBills } from "../bill/reducer/bill.actions";
 
 export default function TablesScreen({
   route,
@@ -26,6 +27,7 @@ export default function TablesScreen({
 
   useEffect(() => {
     loadTables(dispatch, authState.restaurant);
+    loadBills(dispatch);
   }, []);
 
   return !!tablesState.tables ? (

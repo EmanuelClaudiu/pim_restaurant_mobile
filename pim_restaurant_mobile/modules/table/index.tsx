@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Pressable,
   Text,
@@ -21,6 +21,7 @@ import { $gridSize, $iconSize } from "../../constants/sizing";
 import { Flex } from "@react-native-material/core";
 import { Category } from "./models/category/Category.model";
 import { Product } from "./models/product/Product.model";
+import { Table } from "../tables/models/table/Table.model";
 
 export default function TableScreen({
   route,
@@ -29,19 +30,25 @@ export default function TableScreen({
   route: any;
   navigation: any;
 }) {
-  const { table } = route.params.table;
+  const [table, setTable] = useState(route.params.table);
   const authState = useSelector((state: RootState) => state.auth);
   const tableState = useSelector((state: RootState) => state.table);
+  const billsState = useSelector((state: RootState) => state.bills);
+  const [bill, setBill] = useState(
+    billsState.bills.find((bill) => bill.idTable === table.id)
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
-    navigation.setOptions({ title: `Masa nr. ${route.params.table.id}` });
+    navigation.setOptions({ title: `Masa nr. ${table.id}` });
+    console.log(bill);
     loadProducts(dispatch, authState.restaurant);
   }, []);
 
   return !!tableState.sections &&
     !!tableState.categories &&
-    !!tableState.products ? (
+    !!tableState.products &&
+    !!billsState.bills ? (
     <View style={styles.container}>
       <View style={styles.sections}>
         <Pressable style={styles.section}>
@@ -91,7 +98,13 @@ export default function TableScreen({
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.product} onPress={() => {}}>
               <Text style={styles.productText}>{item.name}</Text>
-              <Text style={styles.productText}>Preț: {item.price} lei</Text>
+              <Text style={styles.productText}>Preț: {item.price} lei {!!bill.items
+                .map((item) => item.product)
+                .find((product) => product.id === item.id) ? (
+                <View style={styles.quantityLabel}><Text style={styles.quantityLabelText}>{bill.items.find(i => i.product.id === item.id).quantity}</Text></View>
+              ) : (
+                <></>
+              )}</Text>
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item.id}
@@ -99,16 +112,24 @@ export default function TableScreen({
           columnWrapperStyle={styles.productRow}
         />
       </View>
-      <View style={styles.receiptPane}>
+      <Pressable
+        style={styles.receiptPane}
+        onPress={() => {
+          navigation.navigate("Bill", { bill });
+        }}
+      >
         <Text style={styles.receiptPaneText}>
           Vezi nota de plată{" "}
           <FontAwesome
             name="check-square-o"
             size={24}
-            style={{ color: $pimRestaurantSilverTints[500], marginLeft: $gridSize }}
+            style={{
+              color: $pimRestaurantSilverTints[500],
+              marginLeft: $gridSize,
+            }}
           />
         </Text>
-      </View>
+      </Pressable>
     </View>
   ) : (
     <View>

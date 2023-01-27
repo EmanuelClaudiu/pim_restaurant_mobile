@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "44scK2fGAeC4JTMJHBOaNTO9TeRyiJt8f+P0m7sPhvc=",
+  "Source": "PIMRestaurantAPI",
+  "BasePath": "_content/PIMRestaurantAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

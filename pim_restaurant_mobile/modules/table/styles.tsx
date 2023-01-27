@@ -46,28 +46,43 @@ export const styles = StyleSheet.create({
   },
   products: {
     height: '75vh',
-    padding: $gridSize
   },
   productRow: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    height: '10vh',
+    height: '8vh',
   },
   product: {
-    backgroundColor: $pimRestaurantBlackTints[300],
-    width: '45%',
-    height: '90%',
+    backgroundColor: $pimRestaurantBlackTints[500],
+    width: '50%',
+    height: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
-    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: $pimRestaurantBlack,
   },
   productText: {
+    display: 'flex',
+    flexDirection: 'row',
     color: $pimRestaurantSilverTints[300],
     textAlign: 'center',
     letterSpacing: 1.25,
+  },
+  quantityLabel: {
+    backgroundColor: $pimRestaurantRed,
+    width: '1.5em',
+    height: '1.5em',
+    borderRadius: 50,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quantityLabelText: {
+    color: $pimRestaurantSilverTints[500],
+    fontSize: 12
   },
   receiptPane: {
     backgroundColor: $pimRestaurantGreen,

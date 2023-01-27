@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { $pimRestaurantBlack, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/Colors";
+import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/Colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     height: "100vh",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: $pimRestaurantSilver
+    backgroundColor: $pimRestaurantBlackTints[500],
   },
   loginCard: {
     backgroundColor: $pimRestaurantBlack,
