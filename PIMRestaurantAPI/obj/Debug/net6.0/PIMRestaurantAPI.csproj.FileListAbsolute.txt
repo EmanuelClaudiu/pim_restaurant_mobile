@@ -80,3 +80,5 @@ C:\dev-manu\pim_restaurant_mobile\PIMRestaurantAPI\obj\Debug\net6.0\PIMRestauran
 C:\dev-manu\pim_restaurant_mobile\PIMRestaurantAPI\obj\Debug\net6.0\ref\PIMRestaurantAPI.dll
 C:\dev-manu\pim_restaurant_mobile\PIMRestaurantAPI\obj\Debug\net6.0\PIMRestaurantAPI.pdb
 C:\dev-manu\pim_restaurant_mobile\PIMRestaurantAPI\obj\Debug\net6.0\PIMRestaurantAPI.genruntimeconfig.cache
+C:\dev-manu\pim_restaurant_mobile\PIMRestaurantAPI\bin\Debug\net6.0\AutoMapper.dll
+C:\dev-manu\pim_restaurant_mobile\PIMRestaurantAPI\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

@@ -1,18 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Alert, TextInput, Text, View, Pressable } from "react-native";
-import * as TablesService from "./tables.service";
+import { Text, View, Pressable } from "react-native";
 import { styles } from "./styles";
-import { mock_waiters } from "../../mock_data/waiters";
-import * as SecureStore from "expo-secure-store";
-import { Waiter } from "../login/models/waiter/Waiter.model";
-import AsyncStorage from "@react-native-community/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { loadTables } from "./reducer/tables.actions";
-import { TABLE_STATUS } from "./models/table/table-status.enum";
 import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/Colors";
-import { loadBills } from "../bill/reducer/bill.actions";
+import { TablesState } from "./reducer/tables.reducer";
+import { Sala } from "../rooms/models/room/Sala.model";
 
 export default function TablesScreen({
   route,
@@ -21,19 +14,16 @@ export default function TablesScreen({
   route: any;
   navigation: any;
 }) {
-  const authState = useSelector((state: RootState) => state.auth);
-  const tablesState = useSelector((state: RootState) => state.tables);
+  const [room, setRoom] = useState<Sala>(route.params.room);
+  const tablesState: TablesState = useSelector((state: RootState) => state.tables);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    loadTables(dispatch, authState.restaurant);
-    loadBills(dispatch);
+    navigation.setOptions({ title: `${room.denumireSala}` });
   }, []);
 
-  return !!tablesState.tables ? (
+  return dataFinishedLoading(tablesState) ? (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bună {authState.waiter.name}</Text>
-      <Text style={styles.restaurantText}>{authState.restaurant.name}</Text>
       <View style={styles.tablesContainer}>
         {tablesState.tables.map((table, key) => (
           <Pressable
@@ -45,20 +35,24 @@ export default function TablesScreen({
               styles.table,
               {
                 backgroundColor:
-                  table.status === TABLE_STATUS.FREE
+                  table.acumPeScaun === -1
                     ? $pimRestaurantGreen
                     : $pimRestaurantRed,
               },
             ]}
           >
-            <Text style={styles.text}>Masa nr. {key + 1}</Text>
+            <Text style={styles.text}>{table.name}</Text>
           </Pressable>
         ))}
       </View>
     </View>
   ) : (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Loading...</Text>
+      <Text style={styles.welcomeText}>Se încarcă...</Text>
     </View>
   );
 }
+
+const dataFinishedLoading = (tablesState: TablesState) => {
+  return !tablesState.isLoading;
+};

@@ -1,15 +1,22 @@
-import { LOAD_TABLES_FAILURE, LOAD_TABLES_REQUEST, LOAD_TABLES_SUCCESS } from './tables.actions';
-import { Table } from "../models/table/Table.model";
+import { Masa } from "./../models/table/Masa.model";
+import {
+  LOAD_TABLES_BY_ROOM_FAILURE,
+  LOAD_TABLES_BY_ROOM_REQUEST,
+  LOAD_TABLES_BY_ROOM_SUCCESS,
+  LOAD_TABLES_FAILURE,
+  LOAD_TABLES_REQUEST,
+  LOAD_TABLES_SUCCESS,
+} from "./tables.actions";
 
-interface TablesState {
-  tables: Table[];
-  loading: boolean;
+export interface TablesState {
+  tables: Masa[];
+  isLoading: boolean;
   error: any;
 }
 
 const initialState: TablesState = {
   tables: null,
-  loading: false,
+  isLoading: false,
   error: null,
 };
 
@@ -18,19 +25,37 @@ const tablesReducer = (state = initialState, action: any) => {
     case LOAD_TABLES_REQUEST:
       return {
         ...state,
-        loading: true,
+        isLoading: true,
         error: null,
       };
     case LOAD_TABLES_SUCCESS:
       return {
         ...state,
         tables: action.tables,
-        loading: false,
+        isLoading: false,
       };
     case LOAD_TABLES_FAILURE:
       return {
         ...state,
-        loading: false,
+        isLoading: false,
+        error: action.error,
+      };
+    case LOAD_TABLES_BY_ROOM_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+    case LOAD_TABLES_BY_ROOM_SUCCESS:
+      return {
+        ...state,
+        tables: action.tables,
+        isLoading: false,
+      };
+    case LOAD_TABLES_BY_ROOM_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
         error: action.error,
       };
     default:

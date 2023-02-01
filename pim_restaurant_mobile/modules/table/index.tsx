@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { Section } from "./models/section/Section.model";
 import { loadProducts } from "./reducer/table.actions";
 import { styles } from "./styles";
 import { FontAwesome } from "@expo/vector-icons";
@@ -18,10 +17,7 @@ import {
   $pimRestaurantSilverTints,
 } from "../../constants/Colors";
 import { $gridSize, $iconSize } from "../../constants/sizing";
-import { Flex } from "@react-native-material/core";
 import { Category } from "./models/category/Category.model";
-import { Product } from "./models/product/Product.model";
-import { Table } from "../tables/models/table/Table.model";
 
 export default function TableScreen({
   route,

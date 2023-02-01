@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, Text, View, Pressable } from "react-native";
+import { TextInput, Text, View, Pressable, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
 import { login } from "./reducer/auth.actions";
 import { useDispatch } from "react-redux";
@@ -31,9 +31,9 @@ export default function LoginScreen({ navigation } : {navigation: any}) {
           style={styles.input}
           secureTextEntry
         />
-        <Pressable onPress={handleLogin} style={styles.button}>
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.button.text}>ACCESEAZĂ</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );
