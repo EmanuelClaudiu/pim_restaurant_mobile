@@ -7,6 +7,9 @@ namespace PIMRestaurantAPI
         public AutoMapperProfile()
         {
             CreateMap<MeseScaune, MasaDTO>();
+            CreateMap<NomenclatorGrupa, GrupaDTO>();
+            CreateMap<Produse, ProdusDTO>();
+            CreateMap<Produse, BillItemDTO>();
         }
     }
 }

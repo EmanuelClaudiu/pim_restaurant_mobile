@@ -6,6 +6,9 @@ import { RootState } from "../../Store";
 import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/Colors";
 import { TablesState } from "./reducer/tables.reducer";
 import { Sala } from "../rooms/models/room/Sala.model";
+import { loadBillByTable } from "../bill/reducer/bill.actions";
+import { loadGroups, loadProducts } from "../table/reducer/table.actions";
+import { loadLocations } from "../locations/reducer/locations.actions";
 
 export default function TablesScreen({
   route,
@@ -29,13 +32,17 @@ export default function TablesScreen({
           <Pressable
             key={key}
             onPress={() => {
-              navigation.navigate("Table", { table: table });
+              loadBillByTable(dispatch, table);
+              loadProducts(dispatch);
+              loadLocations(dispatch);
+              loadGroups(dispatch);
+              navigation.navigate("Table", { table, room });
             }}
             style={[
               styles.table,
               {
                 backgroundColor:
-                  table.acumPeScaun === -1
+                  !table.occupied 
                     ? $pimRestaurantGreen
                     : $pimRestaurantRed,
               },

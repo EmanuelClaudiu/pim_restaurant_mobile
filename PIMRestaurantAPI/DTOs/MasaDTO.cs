@@ -7,6 +7,7 @@
         public long? Idsala { get; set; }
 
         public string? Name { get; set; }
+        public bool? Occupied { get; set; }
 
         public long? AcumPeScaun { get; set; }
     }

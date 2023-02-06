@@ -1,23 +1,13 @@
 import { useEffect, useState } from "react";
 import {
-  Pressable,
   Text,
   View,
-  FlatList,
-  ScrollView,
   TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { styles } from "./styles";
-import { FontAwesome } from "@expo/vector-icons";
-import {
-  $pimRestaurantSilver,
-  $pimRestaurantSilverTints,
-} from "../../constants/Colors";
-import { $gridSize, $iconSize } from "../../constants/sizing";
-import { Flex } from "@react-native-material/core";
-import { loadBills } from "./reducer/bill.actions";
+import { BillState } from "./reducer/bill.reducer";
 
 export default function BillScreen({
   route,
@@ -26,21 +16,20 @@ export default function BillScreen({
   route: any;
   navigation: any;
 }) {
-  const [bill, setBill] = useState(route.params.bill);
-  const billsState = useSelector((state: RootState) => state.bills);
+  const [table, setTable] = useState(route.params.table);
+  const billState: BillState = useSelector((state: RootState) => state.bills);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(bill);
     navigation.setOptions({ title: "Nota" });
   }, []);
 
-  return !!billsState.bills ? (
+  return dataFinishedLoading(billState) ? (
     <View style={styles.container}>
       <View style={styles.bill}>
         <View style={styles.billHeader}>
           <Text style={styles.billHeaderTitle}>
-            Nota de plată masa nr. {bill.idTable}
+            Nota de plată masa nr. {table.id}
           </Text>
         </View>
         <View style={styles.billProducts}>
@@ -56,11 +45,11 @@ export default function BillScreen({
             </Text>
           </View>
           <View style={{ borderBottomColor: "black", borderBottomWidth: 1 }} />
-          {bill.items.map((item, index) => (
+          {billState.bill.map((item, index) => (
             <View key={index}>
               <View style={styles.billProduct}>
-                <Text style={styles.billProductText}>{item.product.name}</Text>
-                <Text style={styles.billProductText}>{item.product.price}</Text>
+                <Text style={styles.billProductText}>{item.product.denumire}</Text>
+                <Text style={styles.billProductText}>{item.product.pret}</Text>
                 <Text style={styles.billProductText}>{item.quantity}</Text>
               </View>
               <View
@@ -71,18 +60,18 @@ export default function BillScreen({
           <View style={styles.totalSection}>
             <Text style={styles.totalSectionText}>
               Total:{" "}
-              {bill.items.reduce(
+              {billState.bill.reduce(
                 (totalPrice, currentItem) =>
-                  totalPrice + currentItem.product.price * currentItem.quantity,
+                  totalPrice + currentItem.product.pret * currentItem.quantity,
                 0
-              )}{" "}
+              ).toFixed(2)}{" "}
               lei
             </Text>
           </View>
         </View>
         <View style={styles.billActions}>
           <TouchableOpacity style={styles.sendBillButton}>
-            <Text style={styles.sendBillButtonText}>TRIMITE NOTA</Text>
+            <Text style={styles.sendBillButtonText}>SALVEAZĂ NOTA</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -93,3 +82,7 @@ export default function BillScreen({
     </View>
   );
 }
+
+const dataFinishedLoading = (billState: BillState) => {
+  return !billState.isLoading;
+};

@@ -1,19 +1,31 @@
-import { mock_bills } from './../../../mock_data/bills';
-export const LOAD_BILLS_REQUEST = "LOAD_BILLS_REQUEST";
+import { Masa } from './../../tables/models/table/Masa.model';
+import { BillItem } from "./../models/bill/BillItem.model";
+import axios from "axios";
+import { ENVIRONMENT } from "../../../env/environment";
+import { Product } from '../../table/models/product/Product.model';
 
-export const LOAD_BILLS_SUCCESS = "LOAD_BILLS_SUCCESS";
+// Actions
+export const LOAD_BILL_REQUEST = "LOAD_BILL_REQUEST";
+export const LOAD_BILL_SUCCESS = "LOAD_BILL_SUCCESS";
+export const LOAD_BILL_FAILURE = "LOAD_BILL_FAILURE";
 
-export const LOAD_BILLS_FAILURE = "LOAD_BILLS_FAILURE";
+// Effects
+export const loadBillByTable = (dispatch: any, table: Masa) => {
+  dispatch({ type: LOAD_BILL_REQUEST });
 
-export const loadBills = (dispatch: any) => {
-    try {
-      dispatch({ type: LOAD_BILLS_REQUEST });
+  axios
+    .get(ENVIRONMENT.api.billItemsBaseUrl, { params: { idTable: table.id } })
+    .then((response) => {
+      dispatch({ type: LOAD_BILL_SUCCESS, bill: mapBillItems(response.data) });
+    })
+    .catch((error) => {
+      dispatch({ type: LOAD_BILL_FAILURE, error });
+    });
+};
 
-      // do REST API login call
-      const bills = mock_bills;
-
-      dispatch({ type: LOAD_BILLS_SUCCESS, bills });
-    } catch (error) {
-      dispatch({ type: LOAD_BILLS_FAILURE, error });
-    }
-  };
+// Helpers
+const mapBillItems = (billItems: any) => {
+  return billItems.map((billItem: any) => {
+    return new BillItem(billItem);
+  });
+};

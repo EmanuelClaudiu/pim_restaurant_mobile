@@ -9,15 +9,27 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { loadProducts } from "./reducer/table.actions";
+import { addProductOnBill, loadProducts } from "./reducer/table.actions";
 import { styles } from "./styles";
 import { FontAwesome } from "@expo/vector-icons";
 import {
+  $pimRestaurantBlack,
   $pimRestaurantSilver,
   $pimRestaurantSilverTints,
 } from "../../constants/Colors";
 import { $gridSize, $iconSize } from "../../constants/sizing";
 import { Category } from "./models/category/Category.model";
+import { BillState } from "../bill/reducer/bill.reducer";
+import { TableState } from "./reducer/table.reducer";
+import { Group } from "./models/group/Group.model";
+import { Locatie } from "../locations/models/location/Locatie.model";
+import { Location } from "./models/location/Location.model";
+import { loadBillByTable } from "../bill/reducer/bill.actions";
+
+export interface ProductsFilters {
+  location: Location;
+  group: Group;
+}
 
 export default function TableScreen({
   route,
@@ -27,27 +39,46 @@ export default function TableScreen({
   navigation: any;
 }) {
   const [table, setTable] = useState(route.params.table);
-  const authState = useSelector((state: RootState) => state.auth);
-  const tableState = useSelector((state: RootState) => state.table);
-  const billsState = useSelector((state: RootState) => state.bills);
-  const [bill, setBill] = useState(
-    billsState.bills.find((bill) => bill.idTable === table.id)
-  );
+  const [room, setRoom] = useState(route.params.room);
+  const [productsFilters, setProductsFilters] = useState<ProductsFilters>({
+    location: null,
+    group: null,
+  });
+  const tableState: TableState = useSelector((state: RootState) => state.table);
+  const billState: BillState = useSelector((state: RootState) => state.bills);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    navigation.setOptions({ title: `Masa nr. ${table.id}` });
-    console.log(bill);
-    loadProducts(dispatch, authState.restaurant);
+    navigation.setOptions({ title: `${table.name} ${room.denumireSala}` });
   }, []);
 
-  return !!tableState.sections &&
-    !!tableState.categories &&
-    !!tableState.products &&
-    !!billsState.bills ? (
+  const setLocationFilter = (location: Location | null) => {
+    const newFilters = {
+      ...productsFilters,
+      location,
+    };
+    loadProducts(dispatch, newFilters);
+    setProductsFilters(newFilters);
+  };
+
+  const setGroupFilter = (group: Group | null) => {
+    const newFilters = {
+      ...productsFilters,
+      group,
+    };
+    loadProducts(dispatch, newFilters);
+    setProductsFilters(newFilters);
+  };
+
+  return dataFinishedLoading(tableState, billState) ? (
     <View style={styles.container}>
       <View style={styles.sections}>
-        <Pressable style={styles.section}>
+        <TouchableOpacity
+          style={styles.section}
+          onPress={() => {
+            setLocationFilter(null);
+          }}
+        >
           <FontAwesome
             name="list-ul"
             size={$iconSize}
@@ -55,25 +86,30 @@ export default function TableScreen({
             style={{ marginBottom: $gridSize }}
           />
           <Text style={styles.sectionText}>Toate</Text>
-        </Pressable>
-        <Pressable style={styles.section}>
-          <FontAwesome
-            name="cutlery"
-            size={$iconSize}
-            color={$pimRestaurantSilver}
-            style={{ marginBottom: $gridSize }}
-          />
-          <Text style={styles.sectionText}>Bucătărie</Text>
-        </Pressable>
-        <Pressable style={styles.section}>
-          <FontAwesome
-            name="glass"
-            size={$iconSize}
-            color={$pimRestaurantSilver}
-            style={{ marginBottom: $gridSize }}
-          />
-          <Text style={styles.sectionText}>Bar</Text>
-        </Pressable>
+        </TouchableOpacity>
+        {tableState.locations.map((location: Location, index: number) => (
+          <TouchableOpacity
+            style={styles.section}
+            key={index}
+            onPress={() => {
+              setLocationFilter(location);
+            }}
+          >
+            <FontAwesome
+              name={
+                location.denumire.toLowerCase().includes("buc")
+                  ? "cutlery"
+                  : location.denumire.toLowerCase().includes("bar")
+                  ? "glass"
+                  : "star"
+              }
+              size={$iconSize}
+              color={$pimRestaurantSilver}
+              style={{ marginBottom: $gridSize }}
+            />
+            <Text style={styles.sectionText}>{location.denumire}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
       <View
         style={{
@@ -82,28 +118,48 @@ export default function TableScreen({
         }}
       >
         <ScrollView style={styles.categories}>
-          {tableState.categories.map((category: Category, key: number) => (
-            <Pressable key={key} style={styles.category}>
-              <Text style={styles.categoryText}>{category.name}</Text>
-            </Pressable>
+          {tableState.groups.map((group: Group, key: number) => (
+            <TouchableOpacity
+              key={key}
+              style={styles.category}
+              onPress={() => {
+                setGroupFilter(group);
+              }}
+            >
+              <Text style={styles.categoryText}>{group.denumire}</Text>
+            </TouchableOpacity>
           ))}
         </ScrollView>
         <FlatList
           data={tableState.products}
           numColumns={2}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.product} onPress={() => {}}>
-              <Text style={styles.productText}>{item.name}</Text>
-              <Text style={styles.productText}>Preț: {item.price} lei {!!bill.items
-                .map((item) => item.product)
-                .find((product) => product.id === item.id) ? (
-                <View style={styles.quantityLabel}><Text style={styles.quantityLabelText}>{bill.items.find(i => i.product.id === item.id).quantity}</Text></View>
-              ) : (
-                <></>
-              )}</Text>
+            <TouchableOpacity style={styles.product} onPress={() => {
+              addProductOnBill(dispatch, item, table);
+              loadBillByTable(dispatch, table);
+            }}>
+              <Text style={styles.productText}>{item.denumire}</Text>
+              <Text style={styles.productText}>
+                Preț: {item.pret} lei{" "}
+                {!!billState.bill.find(
+                  (billItem) => billItem.product.id === item.id
+                ) ? (
+                  <View style={styles.quantityLabel}>
+                    <Text style={styles.quantityLabelText}>
+                      {
+                        billState.bill.find(
+                          (billItem) => billItem.product.id === item.id
+                        ).quantity
+                      }
+                    </Text>
+                  </View>
+                ) : (
+                  <></>
+                )}
+              </Text>
             </TouchableOpacity>
           )}
-          keyExtractor={(item) => item.id}
+          // keyExtractor={(item) => item.id}
           style={styles.products}
           columnWrapperStyle={styles.productRow}
         />
@@ -111,7 +167,7 @@ export default function TableScreen({
       <Pressable
         style={styles.receiptPane}
         onPress={() => {
-          navigation.navigate("Bill", { bill });
+          navigation.navigate("Bill", { table });
         }}
       >
         <Text style={styles.receiptPaneText}>
@@ -128,8 +184,30 @@ export default function TableScreen({
       </Pressable>
     </View>
   ) : (
-    <View>
-      <Text>Loading...</Text>
+    <View style={styles.container}>
+      <View style={styles.sections}></View>
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <View style={styles.categories}></View>
+        <View style={styles.products}>
+          <Text>Loading...</Text>
+        </View>
+      </View>
+      <View style={styles.receiptPane}></View>
     </View>
   );
 }
+
+const dataFinishedLoading = (tableState: TableState, billState: BillState) => {
+  return (
+    !tableState.isLoading &&
+    !billState.isLoading &&
+    !!tableState.products &&
+    !!tableState.groups &&
+    !!tableState.locations
+  );
+};

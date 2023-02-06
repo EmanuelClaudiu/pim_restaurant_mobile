@@ -26,7 +26,8 @@ export const styles = StyleSheet.create({
     letterSpacing: 1.25,
   },
   categories: {
-    width: '33vw',
+    width: '30vw',
+    maxWidth: '30vw',
     height: '75vh',
     backgroundColor: $pimRestaurantBlackTints[200],
   },
@@ -40,19 +41,20 @@ export const styles = StyleSheet.create({
   },
   categoryText: {
     color: $pimRestaurantSilverTints[200],
-    fontSize: 16,
+    fontSize: 12,
     letterSpacing: 1.2,
     textAlign: 'center',
   },
   products: {
     height: '75vh',
+    maxWidth: '70vw',
   },
   productRow: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    height: '8vh',
+    height: '11.1vh',
   },
   product: {
     backgroundColor: $pimRestaurantBlackTints[500],

@@ -20,6 +20,7 @@ namespace PIMRestaurantAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MasaDTO>>> GetMese([FromQuery] int? idSala = null)
         {
+            var productsOnTable = await _context.ProdusePeMasas.ToListAsync();
             IQueryable<MeseScaune> mese= _context.MeseScaunes;
             if (idSala.HasValue)
             {
@@ -32,7 +33,18 @@ namespace PIMRestaurantAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(result.Select(masa => _mapper.Map<MasaDTO>(masa)));
+            return Ok(result.Select(masa => {
+                var masaDTO = _mapper.Map<MasaDTO>(masa);
+                var product = productsOnTable.FirstOrDefault(x => x.Idscaun == masa.Id);
+                if (product != null)
+                {
+                    masaDTO.Occupied = true;
+                } else
+                {
+                    masaDTO.Occupied = false;
+                }
+                return masaDTO;
+            }));
         }
     }
 }
