@@ -1,5 +1,6 @@
-import { Masa } from './../../tables/models/table/Masa.model';
-import { ProductsFilters } from './../index';
+import { PUT_BILL } from "./../../bill/reducer/bill.actions";
+import { Masa } from "./../../tables/models/table/Masa.model";
+import { ProductsFilters } from "./../index";
 import axios from "axios";
 import { ENVIRONMENT } from "../../../env/environment";
 import { mock_categories } from "../../../mock_data/categories";
@@ -29,30 +30,43 @@ export const LOAD_GROUPS_SUCCESS = "LOAD_GROUPS_SUCCESS";
 export const LOAD_GROUPS_FAILURE = "LOAD_GROUPS_FAILURE";
 
 // Effects
-export const loadProducts = (dispatch: any, filters: ProductsFilters = null) => {
+export const loadProducts = (
+  dispatch: any,
+  filters: ProductsFilters = null
+) => {
   dispatch({ type: LOAD_PRODUCTS_REQUEST });
   const params = configureQueryParams(filters);
   axios
     .get(ENVIRONMENT.api.productsBaseUrl, { params })
     .then((response) => {
-      dispatch({ type: LOAD_PRODUCTS_SUCCESS, products: mapProducts(response.data) });
+      dispatch({
+        type: LOAD_PRODUCTS_SUCCESS,
+        products: mapProducts(response.data),
+      });
     })
     .catch((error) => {
       dispatch({ type: LOAD_PRODUCTS_FAILURE, error });
     });
 };
 
-export const addProductOnBill = (dispatch: any, product: Product, table: Masa) => {
+export const addProductOnBill = (
+  dispatch: any,
+  product: Product,
+  table: Masa
+) => {
   dispatch({ type: ADD_PRODUCT_REQUEST });
   axios
-    .post(`${ENVIRONMENT.api.productsBaseUrl}/${product.id}/AddToBill/${table.id}`)
+    .post(
+      `${ENVIRONMENT.api.productsBaseUrl}/${product.id}/AddToBill/${table.id}`
+    )
     .then((response) => {
-      dispatch({ type: ADD_PRODUCT_SUCCESS});
+      dispatch({ type: ADD_PRODUCT_SUCCESS });
+      dispatch({ type: PUT_BILL, bill: response.data });
     })
     .catch((error) => {
       dispatch({ type: ADD_PRODUCT_FAILURE, error });
-    });  
-}
+    });
+};
 
 export const loadLocations = (dispatch: any) => {
   dispatch({ type: LOAD_LOCATIONS_REQUEST });
@@ -60,7 +74,10 @@ export const loadLocations = (dispatch: any) => {
   axios
     .get(ENVIRONMENT.api.locationsBaseUrl)
     .then((response) => {
-      dispatch({ type: LOAD_LOCATIONS_SUCCESS, locations: mapLocations(response.data) });
+      dispatch({
+        type: LOAD_LOCATIONS_SUCCESS,
+        locations: mapLocations(response.data),
+      });
     })
     .catch((error) => {
       dispatch({ type: LOAD_LOCATIONS_FAILURE, error });
@@ -93,22 +110,22 @@ const configureQueryParams = (filters: ProductsFilters) => {
   }
 
   return queryParams;
-}
+};
 
 const mapProducts = (products: any) => {
   return products.map((product: any) => {
     return new Product(product);
   });
-}
+};
 
 const mapLocations = (locations: any) => {
   return locations.map((location: any) => {
     return new Location(location);
   });
-}
+};
 
 const mapGroups = (groups: any) => {
   return groups.map((group: any) => {
     return new Group(group);
   });
-}
+};

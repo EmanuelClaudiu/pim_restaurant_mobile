@@ -99,6 +99,11 @@ export default function BillScreen({
           }}>
             <Text style={styles.sendBillButtonText}>SALVEAZĂ NOTA</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.homeButton} onPress={() => {
+            navigation.navigate("Rooms");
+          }}>
+            <Text style={styles.homeButtonText}>ACASĂ</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

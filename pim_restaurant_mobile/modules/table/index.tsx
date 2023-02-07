@@ -155,7 +155,6 @@ export default function TableScreen({
               style={styles.product}
               onPress={() => {
                 addProductOnBill(dispatch, item, table);
-                loadBillByTable(dispatch, table);
               }}
             >
               <Text style={styles.productText}>{item.denumire}</Text>

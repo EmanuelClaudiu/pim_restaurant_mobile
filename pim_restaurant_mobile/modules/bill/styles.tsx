@@ -78,4 +78,20 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 1.2,
   },
+  homeButton: {
+    backgroundColor: $pimRestaurantSilverTints[500],
+    border: `2px solid ${$pimRestaurantBlack}`,
+    padding: $gridSize * 2,
+    borderRadius: $gridSize,
+    margin: $gridSize * 2,
+    marginTop: $gridSize,
+    width: '90%'
+  },
+  homeButtonText: {
+    color: $pimRestaurantBlack,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 1.2,
+  }
 });
