@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { addProductOnBill, loadProducts } from "./reducer/table.actions";
+import { addProductOnBill, loadGroups, loadLocations, loadProducts } from "./reducer/table.actions";
 import { styles } from "./styles";
 import { FontAwesome } from "@expo/vector-icons";
 import {
@@ -38,6 +38,7 @@ export default function TableScreen({
   route: any;
   navigation: any;
 }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [table, setTable] = useState(route.params.table);
   const [room, setRoom] = useState(route.params.room);
   const [productsFilters, setProductsFilters] = useState<ProductsFilters>({
@@ -50,6 +51,11 @@ export default function TableScreen({
 
   useEffect(() => {
     navigation.setOptions({ title: `${table.name} ${room.denumireSala}` });
+    loadBillByTable(dispatch, table);
+    loadProducts(dispatch);
+    loadLocations(dispatch);
+    loadGroups(dispatch);
+    setIsLoading(false);
   }, []);
 
   const setLocationFilter = (location: Location | null) => {
@@ -68,6 +74,17 @@ export default function TableScreen({
     };
     loadProducts(dispatch, newFilters);
     setProductsFilters(newFilters);
+  };
+
+  const dataFinishedLoading = (tableState: TableState, billState: BillState) => {
+    return (
+      !isLoading &&
+      !tableState.isLoading &&
+      !billState.isLoading &&
+      !!tableState.products &&
+      !!tableState.groups &&
+      !!tableState.locations
+    );
   };
 
   return dataFinishedLoading(tableState, billState) ? (
@@ -134,10 +151,13 @@ export default function TableScreen({
           data={tableState.products}
           numColumns={2}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.product} onPress={() => {
-              addProductOnBill(dispatch, item, table);
-              loadBillByTable(dispatch, table);
-            }}>
+            <TouchableOpacity
+              style={styles.product}
+              onPress={() => {
+                addProductOnBill(dispatch, item, table);
+                loadBillByTable(dispatch, table);
+              }}
+            >
               <Text style={styles.productText}>{item.denumire}</Text>
               <Text style={styles.productText}>
                 Preț: {item.pret} lei{" "}
@@ -159,7 +179,6 @@ export default function TableScreen({
               </Text>
             </TouchableOpacity>
           )}
-          // keyExtractor={(item) => item.id}
           style={styles.products}
           columnWrapperStyle={styles.productRow}
         />
@@ -201,13 +220,3 @@ export default function TableScreen({
     </View>
   );
 }
-
-const dataFinishedLoading = (tableState: TableState, billState: BillState) => {
-  return (
-    !tableState.isLoading &&
-    !billState.isLoading &&
-    !!tableState.products &&
-    !!tableState.groups &&
-    !!tableState.locations
-  );
-};

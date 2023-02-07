@@ -25,7 +25,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddDbContext<PossistemContext>();
 
 var app = builder.Build();
-app.UseCors(options => options.AllowAnyOrigin());
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS"));
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

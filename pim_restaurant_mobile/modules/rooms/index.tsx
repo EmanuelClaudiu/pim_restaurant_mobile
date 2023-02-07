@@ -29,7 +29,6 @@ export default function RoomsScreen({
       <Text style={styles.restaurantText}>Restaurant Test</Text>
       {roomsState.rooms.map((room, index) => (
         <TouchableOpacity key={index} style={styles.room} onPress={() => {
-          loadTablesByRoom(dispatch, room)
           navigation.navigate("Tables", { room: room });
         }}>
           <Text style={styles.roomText}>{room.denumireSala}</Text>

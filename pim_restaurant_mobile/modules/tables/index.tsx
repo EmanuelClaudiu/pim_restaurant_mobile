@@ -9,6 +9,7 @@ import { Sala } from "../rooms/models/room/Sala.model";
 import { loadBillByTable } from "../bill/reducer/bill.actions";
 import { loadGroups, loadProducts } from "../table/reducer/table.actions";
 import { loadLocations } from "../locations/reducer/locations.actions";
+import { loadTablesByRoom } from "./reducer/tables.actions";
 
 export default function TablesScreen({
   route,
@@ -18,12 +19,19 @@ export default function TablesScreen({
   navigation: any;
 }) {
   const [room, setRoom] = useState<Sala>(route.params.room);
+  const [isLoading, setIsLoading] = useState(true);
   const tablesState: TablesState = useSelector((state: RootState) => state.tables);
   const dispatch = useDispatch();
 
   useEffect(() => {
     navigation.setOptions({ title: `${room.denumireSala}` });
+    loadTablesByRoom(dispatch, room);
+    setIsLoading(false);
   }, []);
+  
+  const dataFinishedLoading = (tablesState: TablesState) => {
+    return !isLoading && !tablesState.isLoading;
+  };
 
   return dataFinishedLoading(tablesState) ? (
     <View style={styles.container}>
@@ -32,10 +40,6 @@ export default function TablesScreen({
           <Pressable
             key={key}
             onPress={() => {
-              loadBillByTable(dispatch, table);
-              loadProducts(dispatch);
-              loadLocations(dispatch);
-              loadGroups(dispatch);
               navigation.navigate("Table", { table, room });
             }}
             style={[
@@ -59,7 +63,3 @@ export default function TablesScreen({
     </View>
   );
 }
-
-const dataFinishedLoading = (tablesState: TablesState) => {
-  return !tablesState.isLoading;
-};

@@ -39,6 +39,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'stretch',
   },
+  quantityInput: {
+    flex: 1,
+    alignSelf: 'stretch',
+    backgroundColor: $pimRestaurantSilverTints[500],
+    color: $pimRestaurantBlack,
+    borderRadius: $gridSize,
+  },
   totalSection: {
     display: 'flex',
     flexDirection: 'row',
