@@ -3,7 +3,7 @@ import { Text, View, Pressable } from "react-native";
 import { styles } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/Colors";
+import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/colors";
 import { TablesState } from "./reducer/tables.reducer";
 import { Sala } from "../rooms/models/room/Sala.model";
 import { loadBillByTable } from "../bill/reducer/bill.actions";

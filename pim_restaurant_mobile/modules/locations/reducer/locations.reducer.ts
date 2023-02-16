@@ -1,5 +1,9 @@
-import { Locatie } from './../models/location/Locatie.model';
-import { LOAD_LOCATIONS_FAILURE, LOAD_LOCATIONS_REQUEST, LOAD_LOCATIONS_SUCCESS } from './locations.actions';
+import { Locatie } from "./../models/location/Locatie.model";
+import {
+  LOAD_LOCATIONS_FAILURE,
+  LOAD_LOCATIONS_REQUEST,
+  LOAD_LOCATIONS_SUCCESS,
+} from "./locations.actions";
 
 export interface LocationsState {
   locations: Locatie[];

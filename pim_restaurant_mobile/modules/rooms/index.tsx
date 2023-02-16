@@ -6,6 +6,7 @@ import { RootState } from "../../Store";
 import { RoomsState } from "./reducer/rooms.reducer";
 import { loadRooms } from "./reducer/rooms.actions";
 import { loadTablesByRoom } from "../tables/reducer/tables.actions";
+import { AuthState } from "../login/reducer/auth.reducer";
 
 export default function RoomsScreen({
   route,
@@ -14,6 +15,9 @@ export default function RoomsScreen({
   route: any;
   navigation: any;
 }) {
+  const authState: AuthState = useSelector(
+    (state: RootState) => state.auth
+  );
   const roomsState: RoomsState = useSelector(
     (state: RootState) => state.rooms
   );
@@ -23,9 +27,13 @@ export default function RoomsScreen({
     loadRooms(dispatch);
   }, []);
 
-  return dataFinishedLoading(roomsState) ? (
+  const dataFinishedLoading = () => {
+    return !roomsState.isLoading && !authState.isLoading;
+  };
+
+  return dataFinishedLoading() ? (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bună Ospatar Test</Text>
+      <Text style={styles.welcomeText}>Bună { authState.waiter.numeUtilizator }</Text>
       <Text style={styles.restaurantText}>Restaurant Test</Text>
       {roomsState.rooms.map((room, index) => (
         <TouchableOpacity key={index} style={styles.room} onPress={() => {
@@ -41,7 +49,3 @@ export default function RoomsScreen({
     </View>
   );
 } 
-
-const dataFinishedLoading = (roomsState: RoomsState) => {
-  return !roomsState.isLoading;
-};

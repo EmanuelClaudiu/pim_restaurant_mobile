@@ -8,7 +8,7 @@ import TablesScreen from "../modules/tables";
 import { RootState } from "../Store";
 import AsyncStorage from "@react-native-community/async-storage";
 import TableScreen from "../modules/table";
-import { $pimRestaurantSilver } from "../constants/Colors";
+import { $pimRestaurantSilver } from "../constants/colors";
 import BillScreen from "../modules/bill";
 import LocationsScreen from "../modules/locations";
 import RoomsScreen from "../modules/rooms";

@@ -1,18 +1,19 @@
 import { Restaurant } from './../../tables/models/restaurant/Restaurant.model';
 import { Waiter } from "../models/waiter/Waiter.model";
 import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from "./auth.actions";
+import { ENVIRONMENT } from '../../../env/environment';
 
-interface AuthState {
+export interface AuthState {
   waiter: Waiter;
-  restaurant: Restaurant;
-  loading: boolean;
+  restaurant: string;
+  isLoading: boolean;
   error: any;
 }
 
 const initialState : AuthState = {
   waiter: null,
   restaurant: null,
-  loading: false,
+  isLoading: false,
   error: null,
 };
 
@@ -21,20 +22,20 @@ const authReducer = (state = initialState, action: any) => {
     case LOGIN_REQUEST:
       return {
         ...state,
-        loading: true,
+        isLoading: true,
         error: null,
       };
     case LOGIN_SUCCESS:
       return {
         ...state,
         waiter: action.waiter,
-        restaurant: action.restaurant,
-        loading: false,
+        restaurant: ENVIRONMENT.restaurantName,
+        isLoading: false,
       };
     case LOGIN_FAILURE:
       return {
         ...state,
-        loading: false,
+        isLoading: false,
         error: action.error,
       };
     default:

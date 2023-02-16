@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { $pimRestaurantBlack, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/Colors";
+import { $pimRestaurantBlack, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/colors";
 import { $gridSize } from "../../constants/sizing";
 
 export const styles = StyleSheet.create({

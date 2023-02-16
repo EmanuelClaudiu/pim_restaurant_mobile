@@ -1,12 +1,14 @@
-const baseUrl = 'https://localhost:7107/api';
+const baseUrl = 'https://localhost:7107';
 
 export const ENVIRONMENT = {
     api: {
-        locationsBaseUrl: `${baseUrl}/Location`,
-        groupsBaseUrl: `${baseUrl}/Group`,
-        roomsBaseUrl: `${baseUrl}/Sala`,
-        tablesBaseUrl: `${baseUrl}/Mese`,
-        billItemsBaseUrl: `${baseUrl}/BillItems`,
-        productsBaseUrl: `${baseUrl}/Product`,
-    }
+        locationsBaseUrl: `${baseUrl}/api/Location`,
+        groupsBaseUrl: `${baseUrl}/api/Group`,
+        roomsBaseUrl: `${baseUrl}/api/Sala`,
+        tablesBaseUrl: `${baseUrl}/api/Mese`,
+        billItemsBaseUrl: `${baseUrl}/api/BillItems`,
+        productsBaseUrl: `${baseUrl}/api/Product`,
+        loginBaseUrl: `${baseUrl}/Login`,
+    },
+    restaurantName: 'Restaurant Test',	
 };

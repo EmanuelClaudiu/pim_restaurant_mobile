@@ -1,3 +1,5 @@
+import axios from "axios";
+import { ENVIRONMENT } from "../../../env/environment";
 import { mock_restaurants } from "../../../mock_data/restaurants";
 import { mock_waiters } from "../../../mock_data/waiters";
 import { Waiter } from "../models/waiter/Waiter.model";
@@ -14,29 +16,15 @@ export const LOGOUT_SUCCESS = "LOGOUT_REQUEST";
 
 export const LOGOUT_FAILURE = "LOGOUT_REQUEST";
 
-export const login = (dispatch: any, email: string, password: string) => {
-  try {
-    dispatch({ type: LOGIN_REQUEST });
+export const login = (dispatch: any, code: string) => {
+  dispatch({ type: LOGIN_REQUEST });
 
-    // do REST API login call
-    const waiter = mock_waiters[0];
-    const restaurant = mock_restaurants[0];
-
-    dispatch({ type: LOGIN_SUCCESS, waiter, restaurant });
-  } catch (error) {
-    dispatch({ type: LOGIN_FAILURE, error });
-  }
-};
-
-export const logout = (dispatch: any) => {
-    try {
-      dispatch({ type: LOGIN_REQUEST });
-  
-      // do REST API login call
-      const waiter = new Waiter({});
-  
-      dispatch({ type: LOGIN_SUCCESS, waiter });
-    } catch (error) {
+  axios
+    .post(`${ENVIRONMENT.api.loginBaseUrl}`, { code })
+    .then((response) => {
+      dispatch({ type: LOGIN_SUCCESS, waiter: new Waiter(response.data) });
+    })
+    .catch((error) => {
       dispatch({ type: LOGIN_FAILURE, error });
-    }
-  };
+    });
+};

@@ -1,17 +1,26 @@
 import { useState } from "react";
-import { TextInput, Text, View, Pressable, TouchableOpacity } from "react-native";
+import {
+  TextInput,
+  Text,
+  View,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { styles } from "./styles";
 import { login } from "./reducer/auth.actions";
 import { useDispatch } from "react-redux";
 
-export default function LoginScreen({ navigation } : {navigation: any}) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+export default function LoginScreen({ navigation }: { navigation: any }) {
+  const [code, setCode] = useState("");
 
   const dispatch = useDispatch();
 
+  const handleCodeChange = (input: any) => {
+    setCode(isNaN(parseInt(input)) ? "" : input);
+  };
+
   async function handleLogin() {
-    login(dispatch, username, password);
+    login(dispatch, code);
   }
 
   return (
@@ -19,20 +28,16 @@ export default function LoginScreen({ navigation } : {navigation: any}) {
       <View style={styles.loginCard}>
         <Text style={styles.formTitle}>Login Ospătar</Text>
         <TextInput
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Nume de utilizator"
+          value={code}
+          placeholder="Introdu parola"
           style={styles.input}
-        />
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Parola"
-          style={styles.input}
-          secureTextEntry
+          onChangeText={(input) => {
+            handleCodeChange(input);
+          }}
+          keyboardType="number-pad"
         />
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.button.text}>ACCESEAZĂ</Text>
+          <Text style={styles.buttonText}>ACCESEAZĂ</Text>
         </TouchableOpacity>
       </View>
     </View>

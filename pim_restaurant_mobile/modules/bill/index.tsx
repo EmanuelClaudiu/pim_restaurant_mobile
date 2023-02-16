@@ -16,6 +16,7 @@ export default function BillScreen({
   navigation: any;
 }) {
   const [table, setTable] = useState(route.params.table);
+  const state = useSelector((state: RootState) => state);
   const billState: BillState = useSelector((state: RootState) => state.bills);
   const dispatch = useDispatch();
 

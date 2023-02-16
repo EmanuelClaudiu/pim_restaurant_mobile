@@ -16,7 +16,7 @@ import {
   $pimRestaurantBlack,
   $pimRestaurantSilver,
   $pimRestaurantSilverTints,
-} from "../../constants/Colors";
+} from "../../constants/colors";
 import { $gridSize, $iconSize } from "../../constants/sizing";
 import { Category } from "./models/category/Category.model";
 import { BillState } from "../bill/reducer/bill.reducer";

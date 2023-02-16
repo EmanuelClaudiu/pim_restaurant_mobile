@@ -1,81 +1,88 @@
 import { StyleSheet } from "react-native";
-import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantGreen, $pimRestaurantRed, $pimRestaurantSilver, $pimRestaurantSilverTints } from "../../constants/Colors";
+import {
+  $pimRestaurantBlack,
+  $pimRestaurantBlackTints,
+  $pimRestaurantGreen,
+  $pimRestaurantRed,
+  $pimRestaurantSilver,
+  $pimRestaurantSilverTints,
+} from "../../constants/colors";
 import { $gridSize } from "../../constants/sizing";
 
 export const styles = StyleSheet.create({
   container: {
     display: "flex",
     backgroundColor: $pimRestaurantBlack,
-    minHeight: '100%',
+    minHeight: "100%",
     padding: $gridSize * 2,
   },
   bill: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100%',
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100%",
     backgroundColor: $pimRestaurantSilver,
   },
   billHeader: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   billHeaderTitle: {
     color: $pimRestaurantBlack,
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     padding: $gridSize * 4,
   },
   billProducts: {},
   billProduct: {
     flex: 1,
-    alignSelf: 'stretch',
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignSelf: "stretch",
+    flexDirection: "row",
+    alignItems: "center",
     padding: $gridSize,
   },
   billProductText: {
     color: $pimRestaurantBlack,
     flex: 1,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   quantityInput: {
     flex: 1,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
     backgroundColor: $pimRestaurantSilverTints[500],
     color: $pimRestaurantBlack,
     borderRadius: $gridSize,
   },
   totalSection: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     padding: $gridSize * 2,
   },
   totalSectionText: {
     color: $pimRestaurantBlack,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1.2,
   },
   billActions: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   sendBillButton: {
     backgroundColor: $pimRestaurantGreen,
     padding: $gridSize * 2,
     borderRadius: $gridSize,
     margin: $gridSize * 2,
-    width: '90%'
+    width: "90%",
   },
   sendBillButtonText: {
     color: $pimRestaurantSilverTints[500],
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1.2,
   },
   homeButton: {
@@ -85,13 +92,13 @@ export const styles = StyleSheet.create({
     borderRadius: $gridSize,
     margin: $gridSize * 2,
     marginTop: $gridSize,
-    width: '90%'
+    width: "90%",
   },
   homeButtonText: {
     color: $pimRestaurantBlack,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 1.2,
-  }
+  },
 });

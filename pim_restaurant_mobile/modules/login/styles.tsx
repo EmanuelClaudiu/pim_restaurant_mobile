@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/Colors";
+import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   },
   loginCard: {
     backgroundColor: $pimRestaurantBlack,
-    height: "30vh",
+    height: "25vh",
     width: "70vw",
     display: "flex",
     alignItems: "center",
@@ -42,11 +42,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-
-    text : {
-      color: 'white',
-      letterSpacing: 1.2,
-      fontWeight: '500'
-    }
+  },
+  buttonText : {
+    color: 'white',
+    letterSpacing: 1.2,
+    fontWeight: '500'
   }
 });

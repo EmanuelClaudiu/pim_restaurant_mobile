@@ -10,6 +10,7 @@ namespace PIMRestaurantAPI
             CreateMap<NomenclatorGrupa, GrupaDTO>();
             CreateMap<Produse, ProdusDTO>();
             CreateMap<Produse, BillItemDTO>();
+            CreateMap<Utilizatori, UserDTO>();
         }
     }
 }
