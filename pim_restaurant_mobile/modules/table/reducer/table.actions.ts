@@ -1,3 +1,4 @@
+import { PredefinedQuantity } from "./../models/product/PredefinedCategory.model";
 import { PUT_BILL } from "./../../bill/reducer/bill.actions";
 import { Masa } from "./../../tables/models/table/Masa.model";
 import { ProductsFilters } from "./../index";
@@ -11,6 +12,7 @@ import { Restaurant } from "../../tables/models/restaurant/Restaurant.model";
 import { Group } from "../models/group/Group.model";
 import { Location } from "../models/location/Location.model";
 import { Product } from "../models/product/Product.model";
+import { Waiter } from "../../login/models/waiter/Waiter.model";
 
 // Actions
 export const LOAD_PRODUCTS_REQUEST = "LOAD_PRODUCTS_REQUEST";
@@ -52,15 +54,26 @@ export const loadProducts = (
 export const addProductOnBill = (
   dispatch: any,
   product: Product,
-  table: Masa
+  table: Masa,
+  user: Waiter,
+  orderNumber: string,
+  predefinedQuantity: PredefinedQuantity = null
 ) => {
   dispatch({ type: ADD_PRODUCT_REQUEST });
   axios
     .post(
-      `${ENVIRONMENT.api.productsBaseUrl}/${product.id}/AddToBill/${table.id}`
+      `${ENVIRONMENT.api.productsBaseUrl}/${product.id}/AddToBill/${table.id}`,
+      {
+        iduser: user.id,
+        idProdusCantitatePredefinita: !!predefinedQuantity
+          ? predefinedQuantity.id
+          : null,
+        numarComanda: orderNumber,
+      }
     )
     .then((response) => {
       dispatch({ type: ADD_PRODUCT_SUCCESS });
+      console.log(response.data);
       dispatch({ type: PUT_BILL, bill: response.data });
     })
     .catch((error) => {

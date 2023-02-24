@@ -9,11 +9,19 @@ import {
 import { styles } from "./styles";
 import { login } from "./reducer/auth.actions";
 import { useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [code, setCode] = useState("");
 
   const dispatch = useDispatch();
+
+  const useEffect = async () => {
+    const orderNumber = JSON.parse(await AsyncStorage.getItem(`orderNumber`));
+    if (!!!orderNumber) {
+      await AsyncStorage.setItem(`orderNumber`, JSON.stringify(0));
+    }
+  };
 
   const handleCodeChange = (input: any) => {
     setCode(isNaN(parseInt(input)) ? "" : input);

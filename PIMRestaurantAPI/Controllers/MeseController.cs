@@ -94,6 +94,7 @@ namespace PIMRestaurantAPI.Controllers
                     }
                     billItemDTO.Id = product.Id;
                     billItemDTO.Product = productDTO;
+                    billItemDTO.orderSent = productOnTable.ComandaEfectuata;
                 }
                 billItemDTO.idTable = productOnTable.Idscaun;
                 billItemDTO.Quantity = productOnTable.Cantitate;

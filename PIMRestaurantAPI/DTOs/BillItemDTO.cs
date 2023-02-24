@@ -5,6 +5,7 @@
         public long Id { get; set; }
         public ProdusDTO Product { get; set; }
         public long? idTable { get; set; }
+        public bool? orderSent { get; set; }
         public double? Quantity { get; set; }
     }
 }

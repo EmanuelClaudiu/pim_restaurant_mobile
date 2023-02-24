@@ -11,6 +11,7 @@ namespace PIMRestaurantAPI
             CreateMap<Produse, ProdusDTO>();
             CreateMap<Produse, BillItemDTO>();
             CreateMap<Utilizatori, UserDTO>();
+            CreateMap<ProdusCantitatiPredefinite, CantitatePredefinitaDTO>();
         }
     }
 }

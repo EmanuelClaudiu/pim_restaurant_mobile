@@ -13,5 +13,7 @@
         public long? Locatie { get; set; }
 
         public double? Pret { get; set; }
+
+        public List<CantitatePredefinitaDTO>? CantitatiPredefinite { get; set; }
     }
 }

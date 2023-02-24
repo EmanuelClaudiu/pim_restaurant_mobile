@@ -10,6 +10,7 @@ import { loadBillByTable } from "../bill/reducer/bill.actions";
 import { loadGroups, loadProducts } from "../table/reducer/table.actions";
 import { loadLocations } from "../locations/reducer/locations.actions";
 import { loadTablesByRoom } from "./reducer/tables.actions";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function TablesScreen({
   route,
@@ -22,12 +23,17 @@ export default function TablesScreen({
   const [isLoading, setIsLoading] = useState(true);
   const tablesState: TablesState = useSelector((state: RootState) => state.tables);
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     navigation.setOptions({ title: `${room.denumireSala}` });
     loadTablesByRoom(dispatch, room);
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    isFocused && loadTablesByRoom(dispatch, room);
+  }, [isFocused]);
   
   const dataFinishedLoading = (tablesState: TablesState) => {
     return !isLoading && !tablesState.isLoading;

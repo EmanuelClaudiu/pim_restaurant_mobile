@@ -60,7 +60,7 @@ export default function BillScreen({
           <View style={{ borderBottomColor: "black", borderBottomWidth: 1 }} />
           {billState.bill.map((item, index) => (
             <View key={index}>
-              <View style={styles.billProduct}>
+              <View style={[styles.billProduct, {opacity: item.orderSent ? 0.5 : 1}]}>
                 <Text style={styles.billProductText}>
                   {item.product.denumire}
                 </Text>
@@ -71,6 +71,7 @@ export default function BillScreen({
                   onChangeText={(input) => {
                     handleQuantityChange(item, input);
                   }}
+                  editable={!item.orderSent}
                   keyboardType="number-pad"
                 />
               </View>

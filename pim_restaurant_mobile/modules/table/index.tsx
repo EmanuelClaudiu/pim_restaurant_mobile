@@ -6,10 +6,16 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { addProductOnBill, loadGroups, loadLocations, loadProducts } from "./reducer/table.actions";
+import {
+  addProductOnBill,
+  loadGroups,
+  loadLocations,
+  loadProducts,
+} from "./reducer/table.actions";
 import { styles } from "./styles";
 import { FontAwesome } from "@expo/vector-icons";
 import {
@@ -25,6 +31,12 @@ import { Group } from "./models/group/Group.model";
 import { Locatie } from "../locations/models/location/Locatie.model";
 import { Location } from "./models/location/Location.model";
 import { loadBillByTable } from "../bill/reducer/bill.actions";
+import { Product } from "./models/product/Product.model";
+import { PredefinedQuantity } from "./models/product/PredefinedCategory.model";
+import { AuthState } from "../login/reducer/auth.reducer";
+import DeviceInfo from "react-native-device-info";
+import AsyncStorage from "@react-native-community/async-storage";
+import { useIsFocused } from "@react-navigation/native";
 
 export interface ProductsFilters {
   location: Location;
@@ -45,7 +57,11 @@ export default function TableScreen({
     location: null,
     group: null,
   });
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalData, setModalData] = useState(null);
+
   const tableState: TableState = useSelector((state: RootState) => state.table);
+  const authState: AuthState = useSelector((state: RootState) => state.auth);
   const billState: BillState = useSelector((state: RootState) => state.bills);
   const dispatch = useDispatch();
 
@@ -57,6 +73,11 @@ export default function TableScreen({
     loadGroups(dispatch);
     setIsLoading(false);
   }, []);
+
+  const toggleModal = (product: Product = null) => {
+    setModalData(product);
+    setIsModalVisible(!isModalVisible);
+  };
 
   const setLocationFilter = (location: Location | null) => {
     const newFilters = {
@@ -76,7 +97,21 @@ export default function TableScreen({
     setProductsFilters(newFilters);
   };
 
-  const dataFinishedLoading = (tableState: TableState, billState: BillState) => {
+  const getOrderNumber = async (): Promise<string> => {
+    const deviceName = await DeviceInfo.getDeviceName();
+    const orderNumber = +JSON.parse(await AsyncStorage.getItem(`orderNumber`));
+    if (billState.bill.length === 0) {
+      await AsyncStorage.setItem(`orderNumber`, JSON.stringify(orderNumber + 1));
+      return `${deviceName}-${orderNumber + 1}`;
+    } else {
+      return `${deviceName}-${orderNumber}`;
+    }
+  };
+
+  const dataFinishedLoading = (
+    tableState: TableState,
+    billState: BillState
+  ) => {
     return (
       !isLoading &&
       !tableState.isLoading &&
@@ -147,14 +182,66 @@ export default function TableScreen({
             </TouchableOpacity>
           ))}
         </ScrollView>
+        <Modal
+          visible={isModalVisible}
+          animationType="fade"
+          transparent={true}
+          onRequestClose={() => toggleModal()}
+        >
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Alege cantitatea</Text>
+              {modalData?.cantitatiPredefinite.map(
+                (predefinedQuantity: PredefinedQuantity, index) => (
+                  <TouchableOpacity
+                    style={styles.predefinedQuantity}
+                    onPress={async () => {
+                      addProductOnBill(
+                        dispatch,
+                        modalData,
+                        table,
+                        authState.waiter,
+                        await getOrderNumber(),
+                        predefinedQuantity
+                      );
+                      toggleModal();
+                    }}
+                  >
+                    <Text style={styles.predefinedQuantityText}>
+                      {predefinedQuantity.alias}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              )}
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => toggleModal()}
+              >
+                <Text style={styles.closeButtonText}>Închide</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <FlatList
           data={tableState.products}
           numColumns={2}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.product}
-              onPress={() => {
-                addProductOnBill(dispatch, item, table);
+              onPress={async () => {
+                if (!!item.cantitatiPredefinite.length) {
+                  toggleModal(item);
+                } else {
+                  addProductOnBill(
+                    dispatch,
+                    item,
+                    table,
+                    authState.waiter,
+                    await getOrderNumber()
+                  );
+                }
               }}
             >
               <Text style={styles.productText}>{item.denumire}</Text>

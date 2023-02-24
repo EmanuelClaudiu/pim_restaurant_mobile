@@ -107,4 +107,42 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     letterSpacing: 1.25,
   },
+  modalContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: $gridSize * 4,
+    backgroundColor: $pimRestaurantSilverTints[500],
+  },
+  modalTitle: {
+    color: $pimRestaurantBlackTints[200],
+    fontSize: 24,
+    letterSpacing: 1.25,
+    marginBottom: $gridSize * 2,
+  },
+  predefinedQuantity: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "3em",
+    width: "90%",
+    borderRadius: 50,
+    margin: $gridSize,
+    backgroundColor: $pimRestaurantBlackTints[200],
+    padding: $gridSize,
+  },
+  predefinedQuantityText: {
+    color: $pimRestaurantSilverTints[300],
+    fontSize: 16,
+    letterSpacing: 1.25,
+  },
+  closeButton: {
+    marginTop: $gridSize * 2,
+  },
+  closeButtonText: {
+    color: $pimRestaurantBlackTints[200],
+    fontSize: 16,
+    letterSpacing: 1.25,
+  },
 });

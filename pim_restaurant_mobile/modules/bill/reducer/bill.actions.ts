@@ -18,7 +18,6 @@ export const PUT_BILL_FAILURE = "PUT_BILL_FAILURE";
 // Effects
 export const loadBillByTable = (dispatch: any, table: Masa) => {
   dispatch({ type: LOAD_BILL_REQUEST });
-
   axios
     .get(ENVIRONMENT.api.billItemsBaseUrl, { params: { idTable: table.id } })
     .then((response) => {
