@@ -1,6 +1,3 @@
-import { Section } from "./../models/section/Section.model";
-import { Table } from "../../tables/models/table/Table.model";
-import { Category } from "../models/category/Category.model";
 import { Product } from "../models/product/Product.model";
 import {
   ADD_PRODUCT_FAILURE,

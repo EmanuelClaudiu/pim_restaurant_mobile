@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/colors";
+import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed } from "../../constants/colors";
 
 export const styles = StyleSheet.create({
   container: {

@@ -40,18 +40,41 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: $gridSize,
+    maxWidth: "80%",
   },
   billProductText: {
     color: $pimRestaurantBlack,
     flex: 1,
     alignSelf: "stretch",
   },
-  quantityInput: {
+  quantityStepper: {
     flex: 1,
     alignSelf: "stretch",
+  },
+  quantityInput: {
     backgroundColor: $pimRestaurantSilverTints[500],
     color: $pimRestaurantBlack,
     borderRadius: $gridSize,
+  },
+  stepButtons: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+  },
+  stepButton: {
+    backgroundColor: $pimRestaurantBlackTints[500],
+    borderRadius: $gridSize,
+    width: "2.5em",
+    height: "2em",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  stepButtonText: {
+    color: $pimRestaurantSilverTints[500],
+    fontSize: 24,
+    fontWeight: "bold",
   },
   totalSection: {
     display: "flex",

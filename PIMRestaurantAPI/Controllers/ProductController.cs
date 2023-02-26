@@ -66,6 +66,7 @@ namespace PIMRestaurantAPI.Controllers
             var product = await _context.Produses.FindAsync(idProduct);
             var table = await _context.MeseScaunes.FindAsync(idTable);
             var user = await _context.Utilizatoris.FindAsync(request.Iduser);
+            var predefinedQuantitiesList = await _context.ProdusCantitatiPredefinites.ToListAsync();
 
             if (product == null || table == null || user == null)
             {
@@ -77,7 +78,7 @@ namespace PIMRestaurantAPI.Controllers
                 .FirstOrDefaultAsync();
             if (productOnTable != null)
             {
-                productOnTable.Cantitate = productOnTable.Cantitate + 1;
+                productOnTable.Cantitate = productOnTable.Cantitate + productOnTable.CantitatePredefinita;
                 await _context.SaveChangesAsync();
             } else
             {
@@ -136,12 +137,14 @@ namespace PIMRestaurantAPI.Controllers
 
             return Ok(result.Select(productOnTable => {
                 var product = products.FirstOrDefault(product => product.Id == productOnTable.Idprodus);
+                var predefinedQuantities = predefinedQuantitiesList.FindAll(q => q.Idprodus == product.Id);
                 var billItemDTO = new BillItemDTO();
                 if (product != null)
                 {
                     var basePrice = basePrices.FirstOrDefault(price => price.Idprodus == product.Id);
                     var discountPrice = discountPrices.FirstOrDefault(price => price.Produs == product.Id);
                     var productDTO = _mapper.Map<Produse, ProdusDTO>(product);
+                    productDTO.CantitatiPredefinite = predefinedQuantities.Select(q => _mapper.Map<ProdusCantitatiPredefinite, CantitatePredefinitaDTO>(q)).ToList();
                     if (basePrice != null)
                     {
                         productDTO.Pret = basePrice.PretVanzare;
@@ -153,6 +156,7 @@ namespace PIMRestaurantAPI.Controllers
                     billItemDTO.Id = product.Id;
                     billItemDTO.Product = productDTO;
                     billItemDTO.orderSent = productOnTable.ComandaEfectuata;
+                    billItemDTO.PredefinedQuantity = productOnTable.CantitatePredefinita;
                 }
                 billItemDTO.idTable = productOnTable.Idscaun;
                 billItemDTO.Quantity = productOnTable.Cantitate;

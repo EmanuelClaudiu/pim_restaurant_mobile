@@ -23,6 +23,7 @@ namespace PIMRestaurantAPI.Controllers
             var basePrices = await _context.PretProdusGestiunes.ToListAsync();
             var discountPrices = await _context.FidelizareProduses.ToListAsync();
             var products = await _context.Produses.ToListAsync();
+            var predefinedQuantitiesList = await _context.ProdusCantitatiPredefinites.ToListAsync();
             IQueryable<ProdusePeMasa> productsOnTable = _context.ProdusePeMasas;
             if (idTable != null)
             {
@@ -31,12 +32,14 @@ namespace PIMRestaurantAPI.Controllers
             var result = await productsOnTable.ToListAsync();
             return Ok(result.Select(productOnTable => {
                 var product = products.FirstOrDefault(product => product.Id == productOnTable.Idprodus);
+                var predefinedQuantities = predefinedQuantitiesList.FindAll(q => q.Idprodus == product.Id);
                 var billItemDTO = new BillItemDTO();
                 if (product != null)
                 {
                     var basePrice = basePrices.FirstOrDefault(price => price.Idprodus == product.Id);
                     var discountPrice = discountPrices.FirstOrDefault(price => price.Produs == product.Id);
                     var productDTO = _mapper.Map<Produse, ProdusDTO>(product);
+                    productDTO.CantitatiPredefinite = predefinedQuantities.Select(q => _mapper.Map<ProdusCantitatiPredefinite, CantitatePredefinitaDTO>(q)).ToList();
                     if (basePrice != null)
                     {
                         productDTO.Pret = basePrice.PretVanzare;
@@ -48,6 +51,7 @@ namespace PIMRestaurantAPI.Controllers
                     billItemDTO.Id = product.Id;
                     billItemDTO.Product = productDTO;
                     billItemDTO.orderSent = productOnTable.ComandaEfectuata;
+                    billItemDTO.PredefinedQuantity = productOnTable.CantitatePredefinita;
                 }
                 billItemDTO.idTable = productOnTable.Idscaun;
                 billItemDTO.Quantity = productOnTable.Cantitate;

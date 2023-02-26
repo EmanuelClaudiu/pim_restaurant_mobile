@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { styles } from "./styles";
@@ -25,17 +25,21 @@ export default function BillScreen({
   }, []);
 
   const handleQuantityChange = (item: BillItem, input: any) => {
+    if (input < 0) {
+      return;
+    }
     const newBill = billState.bill.map((billItem) => {
       if (billItem.product.id === item.product.id) {
         return {
           ...billItem,
-          quantity: isNaN(parseInt(input)) ? 0 : parseInt(input),
+          quantity: parseFloat(parseFloat(input).toFixed(2)),
         };
       }
       return billItem;
     });
-    dispatch({type: PUT_BILL, bill: newBill});
-  }
+    console.log(newBill);
+    dispatch({ type: PUT_BILL, bill: newBill });
+  };
 
   return dataFinishedLoading(billState) ? (
     <View style={styles.container}>
@@ -60,20 +64,48 @@ export default function BillScreen({
           <View style={{ borderBottomColor: "black", borderBottomWidth: 1 }} />
           {billState.bill.map((item, index) => (
             <View key={index}>
-              <View style={[styles.billProduct, {opacity: item.orderSent ? 0.5 : 1}]}>
+              <View
+                style={[
+                  styles.billProduct,
+                  { opacity: item.orderSent ? 0.5 : 1 },
+                ]}
+              >
                 <Text style={styles.billProductText}>
                   {item.product.denumire}
                 </Text>
                 <Text style={styles.billProductText}>{item.product.pret}</Text>
-                <TextInput
-                  style={styles.quantityInput}
-                  value={item.quantity.toString()}
-                  onChangeText={(input) => {
-                    handleQuantityChange(item, input);
-                  }}
-                  editable={!item.orderSent}
-                  keyboardType="number-pad"
-                />
+                <View style={styles.quantityStepper}>
+                  <TextInput
+                    style={styles.quantityInput}
+                    value={parseFloat(item.quantity.toString()).toFixed(2)}
+                    editable={false}
+                    keyboardType="number-pad"
+                  />
+                  <View style={styles.stepButtons}>
+                    <TouchableOpacity
+                      style={styles.stepButton}
+                      onPress={() => {
+                        handleQuantityChange(
+                          item,
+                          item.quantity - item.predefinedQuantity
+                        );
+                      }}
+                    >
+                      <Text style={styles.stepButtonText}>-</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.stepButton}
+                      onPress={() => {
+                        handleQuantityChange(
+                          item,
+                          item.quantity + item.predefinedQuantity
+                        );
+                      }}
+                    >
+                      <Text style={styles.stepButtonText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
               <View
                 style={{ borderBottomColor: "black", borderBottomWidth: 1 }}
@@ -96,14 +128,20 @@ export default function BillScreen({
           </View>
         </View>
         <View style={styles.billActions}>
-          <TouchableOpacity style={styles.sendBillButton} onPress={() => {
-            updateTableBill(dispatch, table, billState.bill);
-          }}>
+          <TouchableOpacity
+            style={styles.sendBillButton}
+            onPress={() => {
+              updateTableBill(dispatch, table, billState.bill);
+            }}
+          >
             <Text style={styles.sendBillButtonText}>SALVEAZĂ NOTA</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.homeButton} onPress={() => {
-            navigation.navigate("Rooms");
-          }}>
+          <TouchableOpacity
+            style={styles.homeButton}
+            onPress={() => {
+              navigation.navigate("Rooms");
+            }}
+          >
             <Text style={styles.homeButtonText}>ACASĂ</Text>
           </TouchableOpacity>
         </View>

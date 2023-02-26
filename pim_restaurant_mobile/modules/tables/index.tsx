@@ -6,9 +6,6 @@ import { RootState } from "../../Store";
 import { $pimRestaurantGreen, $pimRestaurantRed } from "../../constants/colors";
 import { TablesState } from "./reducer/tables.reducer";
 import { Sala } from "../rooms/models/room/Sala.model";
-import { loadBillByTable } from "../bill/reducer/bill.actions";
-import { loadGroups, loadProducts } from "../table/reducer/table.actions";
-import { loadLocations } from "../locations/reducer/locations.actions";
 import { loadTablesByRoom } from "./reducer/tables.actions";
 import { useIsFocused } from "@react-navigation/native";
 

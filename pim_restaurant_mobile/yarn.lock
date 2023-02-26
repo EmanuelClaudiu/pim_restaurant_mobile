@@ -7359,6 +7359,11 @@ react-native-screens@~3.18.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-ui-stepper-input@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-ui-stepper-input/-/react-native-ui-stepper-input-1.0.0.tgz#4ff604fc1b40b2520745e9e65c6ace9da4e81c7a"
+  integrity sha512-Xj9p+peWQ1uDDFfdpantnu2pIEt8FgbqWk/EsPnW2Bqoe9of2Ew+G60bsTB3N4x9XpXOb8cBV3g3C/HDDQSh2A==
+
 react-native-vector-icons@^9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz#3c0c82e95defd274d56363cbe8fead8d53167ebd"

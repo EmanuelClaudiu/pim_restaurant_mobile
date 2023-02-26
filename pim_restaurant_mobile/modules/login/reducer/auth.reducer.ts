@@ -1,4 +1,3 @@
-import { Restaurant } from './../../tables/models/restaurant/Restaurant.model';
 import { Waiter } from "../models/waiter/Waiter.model";
 import { LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS } from "./auth.actions";
 import { ENVIRONMENT } from '../../../env/environment';

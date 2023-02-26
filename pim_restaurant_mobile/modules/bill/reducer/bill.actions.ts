@@ -2,7 +2,6 @@ import { Masa } from './../../tables/models/table/Masa.model';
 import { BillItem } from "./../models/bill/BillItem.model";
 import axios from "axios";
 import { ENVIRONMENT } from "../../../env/environment";
-import { Product } from '../../table/models/product/Product.model';
 
 // Actions
 export const LOAD_BILL_REQUEST = "LOAD_BILL_REQUEST";

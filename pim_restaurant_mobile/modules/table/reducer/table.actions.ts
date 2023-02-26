@@ -4,11 +4,6 @@ import { Masa } from "./../../tables/models/table/Masa.model";
 import { ProductsFilters } from "./../index";
 import axios from "axios";
 import { ENVIRONMENT } from "../../../env/environment";
-import { mock_categories } from "../../../mock_data/categories";
-import { mock_products } from "../../../mock_data/products";
-import { mock_sections } from "../../../mock_data/sections";
-import { mock_tables } from "../../../mock_data/tables";
-import { Restaurant } from "../../tables/models/restaurant/Restaurant.model";
 import { Group } from "../models/group/Group.model";
 import { Location } from "../models/location/Location.model";
 import { Product } from "../models/product/Product.model";
@@ -73,7 +68,6 @@ export const addProductOnBill = (
     )
     .then((response) => {
       dispatch({ type: ADD_PRODUCT_SUCCESS });
-      console.log(response.data);
       dispatch({ type: PUT_BILL, bill: response.data });
     })
     .catch((error) => {

@@ -19,16 +19,13 @@ import {
 import { styles } from "./styles";
 import { FontAwesome } from "@expo/vector-icons";
 import {
-  $pimRestaurantBlack,
   $pimRestaurantSilver,
   $pimRestaurantSilverTints,
 } from "../../constants/colors";
 import { $gridSize, $iconSize } from "../../constants/sizing";
-import { Category } from "./models/category/Category.model";
 import { BillState } from "../bill/reducer/bill.reducer";
 import { TableState } from "./reducer/table.reducer";
 import { Group } from "./models/group/Group.model";
-import { Locatie } from "../locations/models/location/Locatie.model";
 import { Location } from "./models/location/Location.model";
 import { loadBillByTable } from "../bill/reducer/bill.actions";
 import { Product } from "./models/product/Product.model";
@@ -36,7 +33,6 @@ import { PredefinedQuantity } from "./models/product/PredefinedCategory.model";
 import { AuthState } from "../login/reducer/auth.reducer";
 import DeviceInfo from "react-native-device-info";
 import AsyncStorage from "@react-native-community/async-storage";
-import { useIsFocused } from "@react-navigation/native";
 
 export interface ProductsFilters {
   location: Location;
@@ -101,7 +97,10 @@ export default function TableScreen({
     const deviceName = await DeviceInfo.getDeviceName();
     const orderNumber = +JSON.parse(await AsyncStorage.getItem(`orderNumber`));
     if (billState.bill.length === 0) {
-      await AsyncStorage.setItem(`orderNumber`, JSON.stringify(orderNumber + 1));
+      await AsyncStorage.setItem(
+        `orderNumber`,
+        JSON.stringify(orderNumber + 1)
+      );
       return `${deviceName}-${orderNumber + 1}`;
     } else {
       return `${deviceName}-${orderNumber}`;
@@ -231,7 +230,12 @@ export default function TableScreen({
             <TouchableOpacity
               style={styles.product}
               onPress={async () => {
-                if (!!item.cantitatiPredefinite.length) {
+                if (
+                  !!item.cantitatiPredefinite.length &&
+                  !!!billState.bill.find(
+                    (billItem) => billItem.product.id === item.id
+                  )
+                ) {
                   toggleModal(item);
                 } else {
                   addProductOnBill(
@@ -255,7 +259,12 @@ export default function TableScreen({
                       {
                         billState.bill.find(
                           (billItem) => billItem.product.id === item.id
-                        ).quantity
+                        ).product.cantitatiPredefinite?.length > 0 ?
+                        (billState.bill.find(
+                          (billItem) => billItem.product.id === item.id
+                        ).quantity).toFixed(2) : (billState.bill.find(
+                          (billItem) => billItem.product.id === item.id
+                        ).quantity)
                       }
                     </Text>
                   </View>

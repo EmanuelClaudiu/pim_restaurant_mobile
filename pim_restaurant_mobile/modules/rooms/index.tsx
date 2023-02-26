@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RoomsState } from "./reducer/rooms.reducer";
 import { loadRooms } from "./reducer/rooms.actions";
-import { loadTablesByRoom } from "../tables/reducer/tables.actions";
 import { AuthState } from "../login/reducer/auth.reducer";
 
 export default function RoomsScreen({

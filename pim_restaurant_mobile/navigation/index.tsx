@@ -1,16 +1,13 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import LoginScreen from "../modules/login";
 import TablesScreen from "../modules/tables";
 import { RootState } from "../Store";
-import AsyncStorage from "@react-native-community/async-storage";
 import TableScreen from "../modules/table";
 import { $pimRestaurantSilver } from "../constants/colors";
 import BillScreen from "../modules/bill";
-import LocationsScreen from "../modules/locations";
 import RoomsScreen from "../modules/rooms";
 
 export default function Navigation() {

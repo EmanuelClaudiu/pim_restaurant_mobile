@@ -82,8 +82,8 @@ export const styles = StyleSheet.create({
   },
   quantityLabel: {
     backgroundColor: $pimRestaurantRed,
-    width: "1.5em",
-    height: "1.5em",
+    width: "2em",
+    height: "2em",
     borderRadius: 50,
     display: "flex",
     alignItems: "center",

@@ -1,5 +1,4 @@
 import { BillItem } from "../models/bill/BillItem.model";
-import { Bill } from "./../models/bill/Bill.model";
 import {
   LOAD_BILL_FAILURE,
   LOAD_BILL_REQUEST,
