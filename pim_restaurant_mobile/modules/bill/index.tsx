@@ -29,7 +29,7 @@ export default function BillScreen({
       return;
     }
     const newBill = billState.bill.map((billItem) => {
-      if (billItem.product.id === item.product.id) {
+      if (billItem.id === item.id) {
         return {
           ...billItem,
           quantity: parseFloat(parseFloat(input).toFixed(2)),
@@ -37,7 +37,6 @@ export default function BillScreen({
       }
       return billItem;
     });
-    console.log(newBill);
     dispatch({ type: PUT_BILL, bill: newBill });
   };
 
@@ -83,6 +82,7 @@ export default function BillScreen({
                   />
                   <View style={styles.stepButtons}>
                     <TouchableOpacity
+                      disabled={item.orderSent}
                       style={styles.stepButton}
                       onPress={() => {
                         handleQuantityChange(
@@ -94,6 +94,7 @@ export default function BillScreen({
                       <Text style={styles.stepButtonText}>-</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
+                      disabled={item.orderSent}
                       style={styles.stepButton}
                       onPress={() => {
                         handleQuantityChange(

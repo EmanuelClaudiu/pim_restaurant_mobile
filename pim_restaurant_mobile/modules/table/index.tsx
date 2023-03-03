@@ -230,12 +230,7 @@ export default function TableScreen({
             <TouchableOpacity
               style={styles.product}
               onPress={async () => {
-                if (
-                  !!item.cantitatiPredefinite.length &&
-                  !!!billState.bill.find(
-                    (billItem) => billItem.product.id === item.id
-                  )
-                ) {
+                if (!!item.cantitatiPredefinite.length) {
                   toggleModal(item);
                 } else {
                   addProductOnBill(
@@ -256,16 +251,24 @@ export default function TableScreen({
                 ) ? (
                   <View style={styles.quantityLabel}>
                     <Text style={styles.quantityLabelText}>
-                      {
-                        billState.bill.find(
-                          (billItem) => billItem.product.id === item.id
-                        ).product.cantitatiPredefinite?.length > 0 ?
-                        (billState.bill.find(
-                          (billItem) => billItem.product.id === item.id
-                        ).quantity).toFixed(2) : (billState.bill.find(
-                          (billItem) => billItem.product.id === item.id
-                        ).quantity)
-                      }
+                      {item.cantitatiPredefinite?.length > 0
+                        ? billState.bill
+                            .filter(
+                              (billItem) => billItem.product.id === item.id
+                            )
+                            .reduce(
+                              (acc, billItem) => acc + billItem.quantity,
+                              0
+                            )
+                            .toFixed(2)
+                        : billState.bill
+                            .filter(
+                              (billItem) => billItem.product.id === item.id
+                            )
+                            .reduce(
+                              (acc, billItem) => acc + billItem.quantity,
+                              0
+                            )}
                     </Text>
                   </View>
                 ) : (

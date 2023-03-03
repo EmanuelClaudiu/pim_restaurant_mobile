@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PIMRestaurantAPI.DTOs;
+using System.Drawing;
+using System.Drawing.Printing;
 
 namespace PIMRestaurantAPI.Controllers
 {
@@ -50,9 +52,25 @@ namespace PIMRestaurantAPI.Controllers
         [HttpPut("{id}/Bill")]
         public async Task<ActionResult<List<BillItemDTO>>> UpdateTableBill(int id, [FromBody] List<BillItemDTO> bill)
         {
+            bill = bill.Where(b => b.orderSent == false).ToList();
+
+            var locations = await _context.NomenclatorLocaties.ToListAsync();
+            foreach (var location in locations)
+            {
+                var locationBillItems = bill.Where(item => item.Product.Locatie == location.Id).ToList();
+                if (locationBillItems.Count() > 0)
+                {
+                    var printer = _context.SetariImprimantaLocaties.FirstOrDefault(x => x.Idlocatie == location.Id);
+                    if (printer != null && printer.Imprimanta != "Fara printare")
+                    {
+                        PrintOrder(locationBillItems.ToList(), printer.Imprimanta);
+                    }
+                }
+            }
+
             foreach(var billItem in bill)
             {
-                var productOnTable = await _context.ProdusePeMasas.FirstOrDefaultAsync(tableProduct => tableProduct.Idscaun == id && tableProduct.Idprodus == billItem.Product.Id);
+                var productOnTable = await _context.ProdusePeMasas.FirstOrDefaultAsync(tableProduct => tableProduct.Id == billItem.Id);
                 if (productOnTable!= null)
                 {
                     if (billItem.Quantity == 0)
@@ -62,6 +80,7 @@ namespace PIMRestaurantAPI.Controllers
                     } else
                     {
                         productOnTable.Cantitate = billItem.Quantity;
+                        productOnTable.ComandaEfectuata = true;
                         await _context.SaveChangesAsync();
                     }
                 } else
@@ -70,20 +89,37 @@ namespace PIMRestaurantAPI.Controllers
                 }
             }
 
-            var basePrices = await _context.PretProdusGestiunes.ToListAsync();
-            var discountPrices = await _context.FidelizareProduses.ToListAsync();
-            var products = await _context.Produses.ToListAsync();
             IQueryable<ProdusePeMasa> productsOnTable = _context.ProdusePeMasas.Where(x => x.Idscaun == id);
             var result = await productsOnTable.ToListAsync();
 
-            return Ok(result.Select(productOnTable => {
+            var returnBill = await GetBillFromProductsOnTableAsync(result);
+
+            return Ok(returnBill);
+        }
+
+        private async Task<List<BillItemDTO>> GetBillFromProductsOnTableAsync(List<ProdusePeMasa> productsOnTable)
+        {
+            var products = await this._context.Produses.ToListAsync();
+            var predefinedQuantitiesList = await _context.ProdusCantitatiPredefinites.ToListAsync();
+            var basePrices = await _context.PretProdusGestiunes.ToListAsync();
+            var discountPrices = await _context.FidelizareProduses.ToListAsync();
+
+            if (products.Count == 0 || predefinedQuantitiesList.Count == 0 || basePrices.Count == 0 || discountPrices.Count == 0)
+            {
+                return new List<BillItemDTO>();
+            }
+
+            var bill = productsOnTable.Select(productOnTable =>
+            {
                 var product = products.FirstOrDefault(product => product.Id == productOnTable.Idprodus);
+                var predefinedQuantities = predefinedQuantitiesList.FindAll(q => q.Idprodus == product.Id);
                 var billItemDTO = new BillItemDTO();
                 if (product != null)
                 {
                     var basePrice = basePrices.FirstOrDefault(price => price.Idprodus == product.Id);
                     var discountPrice = discountPrices.FirstOrDefault(price => price.Produs == product.Id);
                     var productDTO = _mapper.Map<Produse, ProdusDTO>(product);
+                    productDTO.CantitatiPredefinite = predefinedQuantities.Select(q => _mapper.Map<ProdusCantitatiPredefinite, CantitatePredefinitaDTO>(q)).ToList();
                     if (basePrice != null)
                     {
                         productDTO.Pret = basePrice.PretVanzare;
@@ -92,7 +128,7 @@ namespace PIMRestaurantAPI.Controllers
                     {
                         productDTO.Pret = discountPrice.PretNou;
                     }
-                    billItemDTO.Id = product.Id;
+                    billItemDTO.Id = productOnTable.Id;
                     billItemDTO.Product = productDTO;
                     billItemDTO.orderSent = productOnTable.ComandaEfectuata;
                     billItemDTO.PredefinedQuantity = productOnTable.CantitatePredefinita;
@@ -100,7 +136,47 @@ namespace PIMRestaurantAPI.Controllers
                 billItemDTO.idTable = productOnTable.Idscaun;
                 billItemDTO.Quantity = productOnTable.Cantitate;
                 return billItemDTO;
-            }));
+            });
+
+            return bill.ToList();
+        }
+
+        private void PrintOrder(List<BillItemDTO> billItems, string printerName)
+        {
+            // Create a new PrintDocument object
+            PrintDocument pd = new PrintDocument();
+
+            // Set the printer name
+            pd.PrinterSettings.PrinterName = "Samsung ML-1640 Series";
+
+            // Set the page settings, such as paper size and orientation
+            pd.DefaultPageSettings.PaperSize = new PaperSize("A4", 827, 1169);
+            pd.DefaultPageSettings.Landscape = true;
+
+            // Attach an event handler for the PrintPage event and pass arguments to it
+            pd.PrintPage += new PrintPageEventHandler((sender, e) => PrintPageHandler(sender, e, billItems));
+
+            // Print the document
+            pd.Print();
+        }
+
+        private void PrintPageHandler(object sender, PrintPageEventArgs e, List<BillItemDTO> billItems)
+        {
+            // Draw the contents of the document to the printer graphics object
+            Graphics g = e.Graphics;
+            var y = 24;
+            var fontSize = 12;
+            var lineHeight = 1;
+            g.DrawString("Comandă Nouă", new Font("Arial", fontSize), Brushes.Black, 24, y);
+            y += fontSize + lineHeight;
+            g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, 24, y);
+            y += fontSize + lineHeight;
+            foreach (var item in billItems)
+            {
+                g.DrawString($"{item.Product.Denumire} -> {item.Quantity}", new Font("Arial", 12), Brushes.Black, 24, y);
+                y += fontSize + (lineHeight * 2);
+            }
+            g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, 24, y);
         }
 
     }

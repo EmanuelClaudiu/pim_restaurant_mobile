@@ -72,70 +72,76 @@ namespace PIMRestaurantAPI.Controllers
             {
                 return NotFound();
             }
+           
+            var newEntry = new ProdusePeMasa();
+            newEntry.Idscaun = idTable;
+            newEntry.Iduser = request.Iduser;
+            newEntry.NumeUser = user.NumeUtilizator;
+            newEntry.Locatie = GetLocationByProduct(product);
+            newEntry.Idprodus = idProduct;
+            newEntry.Um = GetUMByProduct(product);
+            newEntry.PretUnitar = await GetPretUnitarByProductAsync(product);
+            newEntry.Valoare = newEntry.PretUnitar;
+            newEntry.Cantitate = 1;
+            newEntry.ProdusText = product.Denumire;
+            newEntry.AfiseazaMentiuni = true;
+            newEntry.DataComandaProdus = DateTime.Now;
+            newEntry.ComandaEfectuata = false;
+            newEntry.NumeMasa = table.ToolTip;
+            newEntry.NumeScaun = table.Name;
+            newEntry.Idmasa = table.Idcopil;
+            newEntry.Tva = GetTVAByProduct(product);
+            newEntry.GrupaTva = GetTVAGroupByProduct(product);
+            newEntry.HappyHour = false;
+            newEntry.Idgestiune = table.Idgestiune;
+            newEntry.NumarComanda = request.NumarComanda;
+            newEntry.IntervalHappyHour = -1;
+            newEntry.IduserProdus = request.Iduser;
+            newEntry.GeneratNotaPlata = false;
+            newEntry.TipReteta = await GetProdusRetetaByProduct(idProduct);
+            newEntry.CantitatePredefinita = 1;
+            newEntry.IdrezervareCamera = -1;
+            newEntry.InventarCameraMinibar = false;
 
-            var productOnTable = await _context.ProdusePeMasas
-                .Where(productOnTable => productOnTable.Idscaun == idTable && productOnTable.Idprodus == idProduct)
-                .FirstOrDefaultAsync();
-            if (productOnTable != null)
+            if (request.IdProdusCantitatePredefinita != null)
             {
-                productOnTable.Cantitate = productOnTable.Cantitate + productOnTable.CantitatePredefinita;
-                await _context.SaveChangesAsync();
-            } else
-            {
-                var newEntry = new ProdusePeMasa();
-                newEntry.Idscaun = idTable;
-                newEntry.Iduser = request.Iduser;
-                newEntry.NumeUser = user.NumeUtilizator;
-                newEntry.Locatie = GetLocationByProduct(product);
-                newEntry.Idprodus = idProduct;
-                newEntry.Um = GetUMByProduct(product);
-                newEntry.PretUnitar = await GetPretUnitarByProductAsync(product);
-                newEntry.Valoare = newEntry.PretUnitar;
-                newEntry.Cantitate = 1;
-                newEntry.ProdusText = product.Denumire;
-                newEntry.AfiseazaMentiuni = true;
-                newEntry.DataComandaProdus = DateTime.Now;
-                newEntry.ComandaEfectuata = false;
-                newEntry.NumeMasa = table.ToolTip;
-                newEntry.NumeScaun = table.Name;
-                newEntry.Idmasa = table.Idcopil;
-                newEntry.Tva = GetTVAByProduct(product);
-                newEntry.GrupaTva = GetTVAGroupByProduct(product);
-                newEntry.HappyHour = false;
-                newEntry.Idgestiune = table.Idgestiune;
-                newEntry.NumarComanda = request.NumarComanda;
-                newEntry.IntervalHappyHour = -1;
-                newEntry.IduserProdus = request.Iduser;
-                newEntry.GeneratNotaPlata = false;
-                newEntry.TipReteta = await GetProdusRetetaByProduct(idProduct);
-                newEntry.CantitatePredefinita = 1;
-                newEntry.IdrezervareCamera = -1;
-                newEntry.InventarCameraMinibar = false;
-
-                if (request.IdProdusCantitatePredefinita != null)
+                var predefinedQuantity = await _context.ProdusCantitatiPredefinites.FindAsync(request.IdProdusCantitatePredefinita);
+                if (predefinedQuantity == null)
                 {
-                    var predefinedQuantity = await _context.ProdusCantitatiPredefinites.FindAsync(request.IdProdusCantitatePredefinita);
-                    if (predefinedQuantity == null)
-                    {
-                        return NotFound();
-                    }
-
-                    newEntry.Valoare = newEntry.PretUnitar * predefinedQuantity.CantitatePredefinita;
-                    newEntry.Cantitate = predefinedQuantity.CantitatePredefinita;
-                    newEntry.CantitatePredefinita = predefinedQuantity.CantitatePredefinita;
+                    return NotFound();
                 }
 
-                _context.ProdusePeMasas.Add(newEntry);
-                await _context.SaveChangesAsync();
+                newEntry.Valoare = newEntry.PretUnitar * predefinedQuantity.CantitatePredefinita;
+                newEntry.Cantitate = predefinedQuantity.CantitatePredefinita;
+                newEntry.CantitatePredefinita = predefinedQuantity.CantitatePredefinita;
             }
 
-            var basePrices = await _context.PretProdusGestiunes.ToListAsync();
-            var discountPrices = await _context.FidelizareProduses.ToListAsync();
-            var products = await _context.Produses.ToListAsync();
+            _context.ProdusePeMasas.Add(newEntry);
+            await _context.SaveChangesAsync();
+            
+
             IQueryable<ProdusePeMasa> productsOnTable = _context.ProdusePeMasas.Where(x => x.Idscaun == idTable);
             var result = await productsOnTable.ToListAsync();
 
-            return Ok(result.Select(productOnTable => {
+            var bill = await GetBillFromProductsOnTableAsync(result);
+
+            return Ok(bill);
+        }
+
+        private async Task<List<BillItemDTO>> GetBillFromProductsOnTableAsync(List<ProdusePeMasa> productsOnTable)
+        {
+            var products = await this._context.Produses.ToListAsync();
+            var predefinedQuantitiesList = await _context.ProdusCantitatiPredefinites.ToListAsync();
+            var basePrices = await _context.PretProdusGestiunes.ToListAsync();
+            var discountPrices = await _context.FidelizareProduses.ToListAsync();
+
+            if (products.Count == 0 || predefinedQuantitiesList.Count == 0 || basePrices.Count == 0 || discountPrices.Count == 0)
+            {
+                return new List<BillItemDTO>();
+            }
+
+            var bill = productsOnTable.Select(productOnTable =>
+            {
                 var product = products.FirstOrDefault(product => product.Id == productOnTable.Idprodus);
                 var predefinedQuantities = predefinedQuantitiesList.FindAll(q => q.Idprodus == product.Id);
                 var billItemDTO = new BillItemDTO();
@@ -153,7 +159,7 @@ namespace PIMRestaurantAPI.Controllers
                     {
                         productDTO.Pret = discountPrice.PretNou;
                     }
-                    billItemDTO.Id = product.Id;
+                    billItemDTO.Id = productOnTable.Id;
                     billItemDTO.Product = productDTO;
                     billItemDTO.orderSent = productOnTable.ComandaEfectuata;
                     billItemDTO.PredefinedQuantity = productOnTable.CantitatePredefinita;
@@ -161,7 +167,9 @@ namespace PIMRestaurantAPI.Controllers
                 billItemDTO.idTable = productOnTable.Idscaun;
                 billItemDTO.Quantity = productOnTable.Cantitate;
                 return billItemDTO;
-            }));
+            });
+
+            return bill.ToList();
         }
 
         private string? GetLocationByProduct(Produse product)
