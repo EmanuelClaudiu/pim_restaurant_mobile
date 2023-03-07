@@ -7,6 +7,9 @@ import { BillState } from "./reducer/bill.reducer";
 import { TextInput } from "@react-native-material/core";
 import { BillItem } from "./models/bill/BillItem.model";
 import { PUT_BILL, updateTableBill } from "./reducer/bill.actions";
+import { SettingsState } from "../settings/reducer/settings.reducer";
+import { Config } from "../settings/models/Config.model";
+import { AuthState } from "../login/reducer/auth.reducer";
 
 export default function BillScreen({
   route,
@@ -16,9 +19,12 @@ export default function BillScreen({
   navigation: any;
 }) {
   const [table, setTable] = useState(route.params.table);
-  const state = useSelector((state: RootState) => state);
+  const authState: AuthState = useSelector((state: RootState) => state.auth);
   const billState: BillState = useSelector((state: RootState) => state.bills);
+  const settingsState: SettingsState = useSelector((state: RootState) => state.settings);
   const dispatch = useDispatch();
+
+  const [config, setConfig] = useState(new Config(dispatch, settingsState));
 
   useEffect(() => {
     navigation.setOptions({ title: "Nota" });
@@ -132,7 +138,7 @@ export default function BillScreen({
           <TouchableOpacity
             style={styles.sendBillButton}
             onPress={() => {
-              updateTableBill(dispatch, table, billState.bill);
+              updateTableBill(config, table, authState.waiter, billState.bill);
             }}
           >
             <Text style={styles.sendBillButtonText}>SALVEAZĂ NOTA</Text>

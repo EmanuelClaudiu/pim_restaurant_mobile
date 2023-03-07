@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { styles } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { LocationsState } from "./reducer/locations.reducer";
+import { SettingsState } from "../settings/reducer/settings.reducer";
+import { Config } from "../settings/models/Config.model";
 
 export default function LocationsScreen({
   route,
@@ -15,7 +17,10 @@ export default function LocationsScreen({
   const locationsState: LocationsState = useSelector(
     (state: RootState) => state.locations
   );
+  const settingsState: SettingsState = useSelector((state: RootState) => state.settings);
   const dispatch = useDispatch();
+  
+  const [config, setConfig] = useState(new Config(dispatch, settingsState));
 
   useEffect(() => {
     // loadLocations(dispatch);

@@ -8,6 +8,8 @@ import { TablesState } from "./reducer/tables.reducer";
 import { Sala } from "../rooms/models/room/Sala.model";
 import { loadTablesByRoom } from "./reducer/tables.actions";
 import { useIsFocused } from "@react-navigation/native";
+import { SettingsState } from "../settings/reducer/settings.reducer";
+import { Config } from "../settings/models/Config.model";
 
 export default function TablesScreen({
   route,
@@ -19,17 +21,20 @@ export default function TablesScreen({
   const [room, setRoom] = useState<Sala>(route.params.room);
   const [isLoading, setIsLoading] = useState(true);
   const tablesState: TablesState = useSelector((state: RootState) => state.tables);
+  const settingsState: SettingsState = useSelector((state: RootState) => state.settings);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
+  const [config, setConfig] = useState(new Config(dispatch, settingsState));
+
   useEffect(() => {
     navigation.setOptions({ title: `${room.denumireSala}` });
-    loadTablesByRoom(dispatch, room);
+    loadTablesByRoom(config, room);
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    isFocused && loadTablesByRoom(dispatch, room);
+    isFocused && loadTablesByRoom(config, room);
   }, [isFocused]);
   
   const dataFinishedLoading = (tablesState: TablesState) => {

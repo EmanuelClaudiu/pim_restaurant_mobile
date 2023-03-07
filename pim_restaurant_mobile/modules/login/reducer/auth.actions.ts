@@ -1,3 +1,4 @@
+import { Config } from '../../settings/models/Config.model';
 import axios from "axios";
 import { ENVIRONMENT } from "../../../env/environment";
 import { Waiter } from "../models/waiter/Waiter.model";
@@ -14,11 +15,14 @@ export const LOGOUT_SUCCESS = "LOGOUT_REQUEST";
 
 export const LOGOUT_FAILURE = "LOGOUT_REQUEST";
 
-export const login = (dispatch: any, code: string) => {
+export const login = (config: Config, code: string) => {
+  const dispatch = config.dispatch;
+  const settings = config.settings;
+  
   dispatch({ type: LOGIN_REQUEST });
 
   axios
-    .post(`${ENVIRONMENT.api.loginBaseUrl}`, { code })
+    .post(ENVIRONMENT.api.loginBaseUrl(settings.baseUrl), { code })
     .then((response) => {
       dispatch({ type: LOGIN_SUCCESS, waiter: new Waiter(response.data) });
     })

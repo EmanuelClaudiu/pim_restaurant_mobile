@@ -50,7 +50,7 @@ namespace PIMRestaurantAPI.Controllers
         }
 
         [HttpPut("{id}/Bill")]
-        public async Task<ActionResult<List<BillItemDTO>>> UpdateTableBill(int id, [FromBody] List<BillItemDTO> bill)
+        public async Task<ActionResult<List<BillItemDTO>>> UpdateTableBill(int id, [FromBody] List<BillItemDTO> bill, string? waiterName)
         {
             bill = bill.Where(b => b.orderSent == false).ToList();
 
@@ -63,7 +63,9 @@ namespace PIMRestaurantAPI.Controllers
                     var printer = _context.SetariImprimantaLocaties.FirstOrDefault(x => x.Idlocatie == location.Id);
                     if (printer != null && printer.Imprimanta != "Fara printare")
                     {
-                        PrintOrder(locationBillItems.ToList(), printer.Imprimanta);
+                        var table = await _context.MeseScaunes.FirstOrDefaultAsync(t => t.Id == bill[0].idTable);
+                        var time = DateTime.Now;
+                        PrintOrder(locationBillItems.ToList(), waiterName, location, table, time, printer.Imprimanta);
                     }
                 }
             }
@@ -141,42 +143,52 @@ namespace PIMRestaurantAPI.Controllers
             return bill.ToList();
         }
 
-        private void PrintOrder(List<BillItemDTO> billItems, string printerName)
+        private void PrintOrder(List<BillItemDTO> billItems, string waiterName, NomenclatorLocatie location, MeseScaune table, DateTime time, string printerName)
         {
             // Create a new PrintDocument object
             PrintDocument pd = new PrintDocument();
 
             // Set the printer name
-            pd.PrinterSettings.PrinterName = "Samsung ML-1640 Series";
+            pd.PrinterSettings.PrinterName = "CITIZEN CT-E351";
 
             // Set the page settings, such as paper size and orientation
-            pd.DefaultPageSettings.PaperSize = new PaperSize("A4", 827, 1169);
-            pd.DefaultPageSettings.Landscape = true;
+            /*pd.DefaultPageSettings.PaperSize = new PaperSize("Thermal Printer Paper", 272, 1000);*/
+            pd.DefaultPageSettings.PaperSize = new PaperSize("Thermal Printer Paper", 1000, 272);
+            pd.DefaultPageSettings.Landscape = false;
 
             // Attach an event handler for the PrintPage event and pass arguments to it
-            pd.PrintPage += new PrintPageEventHandler((sender, e) => PrintPageHandler(sender, e, billItems));
+            pd.PrintPage += new PrintPageEventHandler((sender, e) => PrintPageHandler(sender, e, billItems, waiterName, location, table, time));
 
             // Print the document
             pd.Print();
         }
 
-        private void PrintPageHandler(object sender, PrintPageEventArgs e, List<BillItemDTO> billItems)
+        private void PrintPageHandler(object sender, PrintPageEventArgs e, List<BillItemDTO> billItems, string waiterName, NomenclatorLocatie location, MeseScaune table, DateTime time)
         {
             // Draw the contents of the document to the printer graphics object
             Graphics g = e.Graphics;
+            var x = 16;
             var y = 24;
             var fontSize = 12;
-            var lineHeight = 1;
-            g.DrawString("Comandă Nouă", new Font("Arial", fontSize), Brushes.Black, 24, y);
-            y += fontSize + lineHeight;
-            g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, 24, y);
-            y += fontSize + lineHeight;
+            var lineHeight = 3;
+            g.DrawString("Comandă Nouă", new Font("Arial", fontSize), Brushes.Black, x, y);
+            y += fontSize + lineHeight * 2;
+            g.DrawString($"Ospătar: {waiterName}", new Font("Arial", fontSize), Brushes.Black, x, y);
+            y += fontSize + lineHeight * 2;
+            g.DrawString($"Locație: {table.ToolTip}", new Font("Arial", fontSize), Brushes.Black, x, y);
+            y += fontSize + lineHeight * 2;
+            g.DrawString($"Masa: {table.Name}", new Font("Arial", fontSize), Brushes.Black, x, y);
+            y += fontSize + lineHeight * 2;
+            g.DrawString($"Data/Ora: {time}", new Font("Arial", fontSize), Brushes.Black, x, y);
+            y += fontSize + lineHeight * 2;
+            g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, x, y);
+            y += fontSize + lineHeight * 2;
             foreach (var item in billItems)
             {
-                g.DrawString($"{item.Product.Denumire} -> {item.Quantity}", new Font("Arial", 12), Brushes.Black, 24, y);
-                y += fontSize + (lineHeight * 2);
+                g.DrawString($"{item.Product.Denumire} - {item.Quantity} buc.", new Font("Arial", 12), Brushes.Black, x, y);
+                y += fontSize + (lineHeight * 3);
             }
-            g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, 24, y);
+            g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, x, y);
         }
 
     }

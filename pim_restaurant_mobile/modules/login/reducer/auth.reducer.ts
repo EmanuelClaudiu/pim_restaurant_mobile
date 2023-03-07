@@ -28,7 +28,6 @@ const authReducer = (state = initialState, action: any) => {
       return {
         ...state,
         waiter: action.waiter,
-        restaurant: ENVIRONMENT.restaurantName,
         isLoading: false,
       };
     case LOGIN_FAILURE:

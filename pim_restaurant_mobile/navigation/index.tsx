@@ -9,6 +9,7 @@ import TableScreen from "../modules/table";
 import { $pimRestaurantSilver } from "../constants/colors";
 import BillScreen from "../modules/bill";
 import RoomsScreen from "../modules/rooms";
+import SettingsScreen from "../modules/settings";
 
 export default function Navigation() {
   return (
@@ -26,22 +27,38 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       {!!authState.waiter === false ? (
-        <Stack.Screen
-          name="Root"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
+        <>
+          <Stack.Screen
+            name="Root"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              headerStyle: { backgroundColor: $pimRestaurantSilver },
+              title: "Setări",
+            }}
+          />
+        </>
       ) : (
         <>
           <Stack.Screen
             name="Rooms"
             component={RoomsScreen}
-            options={{ headerStyle: { backgroundColor: $pimRestaurantSilver }, title: "Încăperi" }}
+            options={{
+              headerStyle: { backgroundColor: $pimRestaurantSilver },
+              title: "Încăperi",
+            }}
           />
           <Stack.Screen
             name="Tables"
             component={TablesScreen}
-            options={{ headerStyle: { backgroundColor: $pimRestaurantSilver }, title: "Mese" }}
+            options={{
+              headerStyle: { backgroundColor: $pimRestaurantSilver },
+              title: "Mese",
+            }}
           />
           <Stack.Screen
             name="Table"
@@ -52,6 +69,14 @@ function RootNavigator() {
             name="Bill"
             component={BillScreen}
             options={{ headerStyle: { backgroundColor: $pimRestaurantSilver } }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              headerStyle: { backgroundColor: $pimRestaurantSilver },
+              title: "Setări",
+            }}
           />
         </>
       )}

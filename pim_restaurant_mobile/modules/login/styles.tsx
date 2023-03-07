@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
-import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed } from "../../constants/colors";
+import { $pimRestaurantBlack, $pimRestaurantBlackTints, $pimRestaurantRed, $pimRestaurantSilver } from "../../constants/colors";
+import { $gridSize } from "../../constants/sizing";
 
 export const styles = StyleSheet.create({
   container: {
@@ -11,7 +12,7 @@ export const styles = StyleSheet.create({
   },
   loginCard: {
     backgroundColor: $pimRestaurantBlack,
-    height: "25vh",
+    height: "35vh",
     width: "70vw",
     display: "flex",
     alignItems: "center",
@@ -32,19 +33,38 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     letterSpacing: 1.2,
   },
-  button: {
+  buttons: {
+    width: '80%',
+    marginBottom: '8px',
+    display: 'flex',
+    rowGap: $gridSize * 3,
+  },
+  accessButton: {
     backgroundColor: $pimRestaurantRed,
     color: 'white',
-    width: '80%',
+    width: '100%',
     height: '32px',
-    marginBottom: '8px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
   },
-  buttonText : {
+  accessButtonText : {
     color: 'white',
+    letterSpacing: 1.2,
+    fontWeight: '500'
+  },
+  settingsButton: {
+    backgroundColor: $pimRestaurantSilver,
+    width: '100%',
+    height: '32px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  settingsButtonText : {
+    color: $pimRestaurantBlack,
     letterSpacing: 1.2,
     fontWeight: '500'
   }

@@ -33,6 +33,8 @@ import { PredefinedQuantity } from "./models/product/PredefinedCategory.model";
 import { AuthState } from "../login/reducer/auth.reducer";
 import DeviceInfo from "react-native-device-info";
 import AsyncStorage from "@react-native-community/async-storage";
+import { SettingsState } from "../settings/reducer/settings.reducer";
+import { Config } from "../settings/models/Config.model";
 
 export interface ProductsFilters {
   location: Location;
@@ -59,14 +61,17 @@ export default function TableScreen({
   const tableState: TableState = useSelector((state: RootState) => state.table);
   const authState: AuthState = useSelector((state: RootState) => state.auth);
   const billState: BillState = useSelector((state: RootState) => state.bills);
+  const settingsState: SettingsState = useSelector((state: RootState) => state.settings);
   const dispatch = useDispatch();
+
+  const [config, setConfig] = useState(new Config(dispatch, settingsState));
 
   useEffect(() => {
     navigation.setOptions({ title: `${table.name} ${room.denumireSala}` });
-    loadBillByTable(dispatch, table);
-    loadProducts(dispatch);
-    loadLocations(dispatch);
-    loadGroups(dispatch);
+    loadBillByTable(config, table);
+    loadProducts(config);
+    loadLocations(config);
+    loadGroups(config);
     setIsLoading(false);
   }, []);
 
@@ -80,7 +85,7 @@ export default function TableScreen({
       ...productsFilters,
       location,
     };
-    loadProducts(dispatch, newFilters);
+    loadProducts(config, newFilters);
     setProductsFilters(newFilters);
   };
 
@@ -89,7 +94,7 @@ export default function TableScreen({
       ...productsFilters,
       group,
     };
-    loadProducts(dispatch, newFilters);
+    loadProducts(config, newFilters);
     setProductsFilters(newFilters);
   };
 
@@ -198,7 +203,7 @@ export default function TableScreen({
                     style={styles.predefinedQuantity}
                     onPress={async () => {
                       addProductOnBill(
-                        dispatch,
+                        config,
                         modalData,
                         table,
                         authState.waiter,
@@ -234,7 +239,7 @@ export default function TableScreen({
                   toggleModal(item);
                 } else {
                   addProductOnBill(
-                    dispatch,
+                    config,
                     item,
                     table,
                     authState.waiter,

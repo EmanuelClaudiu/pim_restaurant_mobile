@@ -8,6 +8,7 @@ import { Group } from "../models/group/Group.model";
 import { Location } from "../models/location/Location.model";
 import { Product } from "../models/product/Product.model";
 import { Waiter } from "../../login/models/waiter/Waiter.model";
+import { Config } from "../../settings/models/Config.model";
 
 // Actions
 export const LOAD_PRODUCTS_REQUEST = "LOAD_PRODUCTS_REQUEST";
@@ -28,36 +29,36 @@ export const LOAD_GROUPS_FAILURE = "LOAD_GROUPS_FAILURE";
 
 // Effects
 export const loadProducts = (
-  dispatch: any,
+  config: Config,
   filters: ProductsFilters = null
 ) => {
-  dispatch({ type: LOAD_PRODUCTS_REQUEST });
+  config.dispatch({ type: LOAD_PRODUCTS_REQUEST });
   const params = configureQueryParams(filters);
   axios
-    .get(ENVIRONMENT.api.productsBaseUrl, { params })
+    .get(ENVIRONMENT.api.productsBaseUrl(config.settings.baseUrl), { params })
     .then((response) => {
-      dispatch({
+      config.dispatch({
         type: LOAD_PRODUCTS_SUCCESS,
         products: mapProducts(response.data),
       });
     })
     .catch((error) => {
-      dispatch({ type: LOAD_PRODUCTS_FAILURE, error });
+      config.dispatch({ type: LOAD_PRODUCTS_FAILURE, error });
     });
 };
 
 export const addProductOnBill = (
-  dispatch: any,
+  config: Config,
   product: Product,
   table: Masa,
   user: Waiter,
   orderNumber: string,
   predefinedQuantity: PredefinedQuantity = null
 ) => {
-  dispatch({ type: ADD_PRODUCT_REQUEST });
+  config.dispatch({ type: ADD_PRODUCT_REQUEST });
   axios
     .post(
-      `${ENVIRONMENT.api.productsBaseUrl}/${product.id}/AddToBill/${table.id}`,
+      `${ENVIRONMENT.api.productsBaseUrl(config.settings.baseUrl)}/${product.id}/AddToBill/${table.id}`,
       {
         iduser: user.id,
         idProdusCantitatePredefinita: !!predefinedQuantity
@@ -67,40 +68,40 @@ export const addProductOnBill = (
       }
     )
     .then((response) => {
-      dispatch({ type: ADD_PRODUCT_SUCCESS });
-      dispatch({ type: PUT_BILL, bill: response.data });
+      config.dispatch({ type: ADD_PRODUCT_SUCCESS });
+      config.dispatch({ type: PUT_BILL, bill: response.data });
     })
     .catch((error) => {
-      dispatch({ type: ADD_PRODUCT_FAILURE, error });
+      config.dispatch({ type: ADD_PRODUCT_FAILURE, error });
     });
 };
 
-export const loadLocations = (dispatch: any) => {
-  dispatch({ type: LOAD_LOCATIONS_REQUEST });
+export const loadLocations = (config: Config) => {
+  config.dispatch({ type: LOAD_LOCATIONS_REQUEST });
 
   axios
-    .get(ENVIRONMENT.api.locationsBaseUrl)
+    .get(ENVIRONMENT.api.locationsBaseUrl(config.settings.baseUrl))
     .then((response) => {
-      dispatch({
+      config.dispatch({
         type: LOAD_LOCATIONS_SUCCESS,
         locations: mapLocations(response.data),
       });
     })
     .catch((error) => {
-      dispatch({ type: LOAD_LOCATIONS_FAILURE, error });
+      config.dispatch({ type: LOAD_LOCATIONS_FAILURE, error });
     });
 };
 
-export const loadGroups = (dispatch: any) => {
-  dispatch({ type: LOAD_GROUPS_REQUEST });
+export const loadGroups = (config: Config) => {
+  config.dispatch({ type: LOAD_GROUPS_REQUEST });
 
   axios
-    .get(ENVIRONMENT.api.groupsBaseUrl)
+    .get(ENVIRONMENT.api.groupsBaseUrl(config.settings.baseUrl))
     .then((response) => {
-      dispatch({ type: LOAD_GROUPS_SUCCESS, groups: mapGroups(response.data) });
+      config.dispatch({ type: LOAD_GROUPS_SUCCESS, groups: mapGroups(response.data) });
     })
     .catch((error) => {
-      dispatch({ type: LOAD_GROUPS_FAILURE, error });
+      config.dispatch({ type: LOAD_GROUPS_FAILURE, error });
     });
 };
 
