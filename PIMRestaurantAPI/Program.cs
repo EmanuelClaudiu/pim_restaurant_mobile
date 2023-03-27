@@ -4,16 +4,18 @@ global using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         name: "_myAllowSpecificOrigins",
         builder =>
         {
-            builder.WithOrigins("http://localhost:19006/");
+            builder.WithOrigins("http://192.168.1.72:80/");
         }
         );
 });
+
 
 // Add services to the container.
 
@@ -34,7 +36,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+/*app.UseHttpsRedirection();*/
 
 app.UseStaticFiles();
 

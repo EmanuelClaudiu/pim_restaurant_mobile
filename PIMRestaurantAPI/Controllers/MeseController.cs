@@ -149,7 +149,7 @@ namespace PIMRestaurantAPI.Controllers
             PrintDocument pd = new PrintDocument();
 
             // Set the printer name
-            pd.PrinterSettings.PrinterName = "CITIZEN CT-E351";
+            pd.PrinterSettings.PrinterName = printerName;
 
             // Set the page settings, such as paper size and orientation
             /*pd.DefaultPageSettings.PaperSize = new PaperSize("Thermal Printer Paper", 272, 1000);*/
@@ -160,7 +160,10 @@ namespace PIMRestaurantAPI.Controllers
             pd.PrintPage += new PrintPageEventHandler((sender, e) => PrintPageHandler(sender, e, billItems, waiterName, location, table, time));
 
             // Print the document
-            pd.Print();
+            try
+            {
+                pd.Print();
+            } catch (Exception e) { }
         }
 
         private void PrintPageHandler(object sender, PrintPageEventArgs e, List<BillItemDTO> billItems, string waiterName, NomenclatorLocatie location, MeseScaune table, DateTime time)
