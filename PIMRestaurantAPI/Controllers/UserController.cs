@@ -32,7 +32,9 @@ namespace PIMRestaurantAPI.Controllers
             {
                 return BadRequest();
             }
-            return Ok(_mapper.Map<UserDTO>(user));
+            UserDTO userDto = _mapper.Map<UserDTO>(user);
+            userDto.PermisStornare = user.StornareProduseNotaPlata;
+            return Ok(userDto);
         }
 
         private string? EncryptRijndael(string code)

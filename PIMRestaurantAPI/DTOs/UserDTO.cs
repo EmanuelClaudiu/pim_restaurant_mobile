@@ -5,5 +5,6 @@
         public long Id { get; set; }
 
         public string? NumeUtilizator { get; set; }
+        public bool? PermisStornare { get; set; }
     }
 }

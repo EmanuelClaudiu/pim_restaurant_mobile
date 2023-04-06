@@ -10,5 +10,6 @@
         public bool? Occupied { get; set; }
 
         public long? AcumPeScaun { get; set; }
+        public long? IdUser { get; set; } = null;
     }
 }

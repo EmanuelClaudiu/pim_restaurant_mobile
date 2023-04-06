@@ -41,6 +41,7 @@ namespace PIMRestaurantAPI.Controllers
                 if (product != null)
                 {
                     masaDTO.Occupied = true;
+                    masaDTO.IdUser = product.Iduser;
                 } else
                 {
                     masaDTO.Occupied = false;

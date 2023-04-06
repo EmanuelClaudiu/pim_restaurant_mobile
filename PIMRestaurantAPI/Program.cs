@@ -4,19 +4,6 @@ global using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        name: "_myAllowSpecificOrigins",
-        builder =>
-        {
-            builder.WithOrigins("http://192.168.1.72:80/");
-        }
-        );
-});
-
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -26,8 +13,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddDbContext<PossistemContext>();
 
+builder.Services.AddCors(policyBuilder => 
+    policyBuilder.AddDefaultPolicy(policy => 
+        policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod())
+);
+
 var app = builder.Build();
-app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS"));
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
