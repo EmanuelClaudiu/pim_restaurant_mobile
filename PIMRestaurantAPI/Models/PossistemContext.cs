@@ -232,8 +232,18 @@ public partial class PossistemContext : DbContext
     public virtual DbSet<VanzariDirecteProduse> VanzariDirecteProduses { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=46.214.70.41,33322;Initial Catalog=possistem;Persist Security Info=True;User ID=sa;Password=pimpos;Trusted_Connection=false;TrustServerCertificate=True");
+    {
+        var builder = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        var config = builder.Build();
+        var myConfig = config.GetSection("DBConfig");
+
+        var dataSource = myConfig.GetValue<string>("DataSource");
+        var userId = myConfig.GetValue<string>("UserId");
+        var password = myConfig.GetValue<string>("Password");
+
+        optionsBuilder.UseSqlServer($"Data Source={dataSource};Initial Catalog=possistem;Persist Security Info=True;User ID={userId};Password={password};Trusted_Connection=false;TrustServerCertificate=True");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
