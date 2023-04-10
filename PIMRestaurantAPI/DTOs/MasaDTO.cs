@@ -1,4 +1,6 @@
-﻿namespace PIMRestaurantAPI.DTOs
+﻿using PIMRestaurantAPI.DTOs.Enums;
+
+namespace PIMRestaurantAPI.DTOs
 {
     public class MasaDTO
     {
@@ -11,5 +13,6 @@
 
         public long? AcumPeScaun { get; set; }
         public long? IdUser { get; set; } = null;
+        public MasaStatus? Status { get; set; } = MasaStatus.LIBERA;
     }
 }

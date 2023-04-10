@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PIMRestaurantAPI.DTOs;
+using PIMRestaurantAPI.DTOs.Enums;
 using System.Drawing;
 using System.Drawing.Printing;
 
@@ -20,7 +21,7 @@ namespace PIMRestaurantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<MasaDTO>>> GetMese([FromQuery] int? idSala = null)
+        public async Task<ActionResult<List<MasaDTO>>> GetMese([FromQuery] int? idSala = null, [FromQuery] int? idUser = null)
         {
             var productsOnTable = await _context.ProdusePeMasas.ToListAsync();
             IQueryable<MeseScaune> mese = _context.MeseScaunes;
@@ -28,11 +29,18 @@ namespace PIMRestaurantAPI.Controllers
             {
                 mese = mese.Where(x => x.Idsala == idSala.Value && x.Idcopil != null);
             }
+            if (idUser.HasValue)
+            {
+                mese = mese.Where(table => 
+                _context.UtilizatoriMeses.Any(x => 
+                    x.Idutilizator == idUser && x.Idmasa == table.Id ||
+                    x.Idutilizator == idUser && x.Idmasa == table.Idcopil));
+            }
             var result = await mese.ToListAsync();
 
             if (!result.Any())
             {
-                return NotFound();
+                return Ok(new List<MasaDTO>() { });
             }
 
             return Ok(result.Select(masa => {
@@ -42,9 +50,15 @@ namespace PIMRestaurantAPI.Controllers
                 {
                     masaDTO.Occupied = true;
                     masaDTO.IdUser = product.Iduser;
+                    masaDTO.Status = MasaStatus.IN_LUCRU;
+                    if (masa.NotaDePlata != -1)
+                    {
+                        masaDTO.Status = MasaStatus.NOTA_EMISA;
+                    }
                 } else
                 {
                     masaDTO.Occupied = false;
+                    masaDTO.Status = MasaStatus.LIBERA;
                 }
                 return masaDTO;
             }));

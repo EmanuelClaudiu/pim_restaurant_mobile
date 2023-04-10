@@ -15,9 +15,15 @@ namespace PIMRestaurantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ListaSali>>> GetSali()
+        public async Task<ActionResult<List<ListaSali>>> GetSali([FromQuery] int? idUser = null)
         {
-            return Ok(await _context.ListaSalis.ToListAsync());
+            IQueryable<ListaSali> rooms = _context.ListaSalis;
+            if (idUser.HasValue)
+            {
+                rooms = rooms.Where(room => _context.UtilizatoriMeses.Any(x => x.Idsala == room.Id && x.Idutilizator == idUser));
+            }
+            var result = await rooms.ToListAsync();
+            return Ok(result);
         }
     }
 }
