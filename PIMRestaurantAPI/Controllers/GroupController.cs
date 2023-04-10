@@ -20,7 +20,9 @@ namespace PIMRestaurantAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<GrupaDTO>>> GetGroups()
         {
-            var result = await _context.NomenclatorGrupas.ToListAsync();
+            var result = await _context.NomenclatorGrupas.Where(group => 
+                _context.Produses.Any(product => product.Grupa == group.Id)
+            ).ToListAsync();
             return Ok(result.Select(group => _mapper.Map<GrupaDTO>(group)));
         }
     }
