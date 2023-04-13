@@ -30,7 +30,7 @@ namespace PIMRestaurantAPI.Controllers
             var user = await _context.Utilizatoris.Where(user => user.ParolaUtilizator == EncryptRijndael(input.code)).FirstOrDefaultAsync();
             if (user == null)
             {
-                return BadRequest("Parola este gresita. Incearca alt user");
+                return BadRequest("Date incorecte");
             }
             UserDTO userDto = _mapper.Map<UserDTO>(user);
             userDto.PermisStornare = user.StornareProduseNotaPlata;

@@ -117,6 +117,7 @@ namespace PIMRestaurantAPI.Controllers
             }
 
             _context.ProdusePeMasas.Add(newEntry);
+            table.UtilizatorComanda = user.Id;
             await _context.SaveChangesAsync();
             
 
