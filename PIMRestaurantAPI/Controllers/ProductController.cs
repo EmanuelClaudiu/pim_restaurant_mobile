@@ -37,7 +37,7 @@ namespace PIMRestaurantAPI.Controllers
             var result = await products.ToListAsync();
             if (!result.Any())
             {
-                return NotFound();
+                return NotFound("Nu au fost gasite produse cu filtrele precizate");
             }
             return Ok(result.Select(product =>
             {

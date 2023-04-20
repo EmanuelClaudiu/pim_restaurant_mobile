@@ -18,12 +18,15 @@ namespace PIMRestaurantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<GrupaDTO>>> GetGroups()
+        public async Task<ActionResult<List<GrupaDTO>>> GetGroups([FromQuery] int? idLocation = null)
         {
-            var result = await _context.NomenclatorGrupas.Where(group => 
-                _context.Produses.Any(product => product.Grupa == group.Id)
-            ).ToListAsync();
-            return Ok(result.Select(group => _mapper.Map<GrupaDTO>(group)));
+            var groups = await _context.NomenclatorGrupas.Where(group =>
+                idLocation != null ? 
+                    _context.Produses.Any(product => product.Grupa == group.Id && product.Locatie == idLocation) :
+                    _context.Produses.Any(product => product.Grupa == group.Id)
+            ).OrderBy(group => group.Denumire).ToListAsync();
+
+            return Ok(groups.Select(group => _mapper.Map<GrupaDTO>(group)));
         }
     }
 }
