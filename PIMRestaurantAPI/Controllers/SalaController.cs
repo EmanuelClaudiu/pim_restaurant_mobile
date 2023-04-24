@@ -17,7 +17,9 @@ namespace PIMRestaurantAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ListaSali>>> GetSali([FromQuery] int? idUser = null)
         {
-            IQueryable<ListaSali> rooms = _context.ListaSalis;
+            IQueryable<ListaSali> rooms = _context.ListaSalis.Where(
+                room => room.TipVanzare == "Restaurant" && room.IdgestiuneNavigation.GestiuneHotel == false
+            );
             if (idUser.HasValue)
             {
                 rooms = rooms.Where(room => _context.UtilizatoriMeses.Any(x => x.Idsala == room.Id && x.Idutilizator == idUser));

@@ -27,7 +27,7 @@ namespace PIMRestaurantAPI.Controllers
             IQueryable<MeseScaune> mese = _context.MeseScaunes;
             if (idSala.HasValue)
             {
-                mese = mese.Where(x => x.Idsala == idSala.Value && x.Idcopil != null);
+                mese = mese.Where(x => x.Idsala == idSala.Value);
             }
             if (idUser.HasValue)
             {

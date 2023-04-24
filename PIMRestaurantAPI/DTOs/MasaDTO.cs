@@ -7,6 +7,7 @@ namespace PIMRestaurantAPI.DTOs
         public long Id { get; set; }
 
         public long? Idsala { get; set; }
+        public long? Idcopil { get; set; }
 
         public string? Name { get; set; }
         public bool? Occupied { get; set; }

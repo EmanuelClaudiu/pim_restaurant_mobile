@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PIMRestaurantAPI.DTOs;
 using PIMRestaurantAPI.DTOs.Request_Models;
+using System.Text.RegularExpressions;
 
 namespace PIMRestaurantAPI.Controllers
 {
@@ -19,11 +20,12 @@ namespace PIMRestaurantAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProdusDTO>>> GetProducts([FromQuery] int? idGroup = null, [FromQuery] int? idLocation = null)
+        public async Task<ActionResult<List<ProdusDTO>>> GetProducts([FromQuery] int? idGroup = null, [FromQuery] int? idLocation = null, [FromQuery] string? searchPrompt = "")
         {
             var basePrices = await _context.PretProdusGestiunes.ToListAsync();
             var discountPrices = await _context.FidelizareProduses.ToListAsync();
             var predefinedQuantitiesList = await _context.ProdusCantitatiPredefinites.ToListAsync();
+            var categoriiContabile = await _context.NomenclatorCategoriiContabiles.ToListAsync();
 
             IQueryable<Produse> products = _context.Produses;
             if (idGroup.HasValue)
@@ -34,7 +36,24 @@ namespace PIMRestaurantAPI.Controllers
             {
                 products = products.Where(products => products.Locatie == idLocation);
             }
-            var result = await products.ToListAsync();
+            if (searchPrompt != "")
+            {
+                products = products.Where(product => product.Denumire.Trim().ToLower().Contains(searchPrompt.Trim().ToLower()));
+            }
+
+            Regex regex = new Regex(@"materii\sprime", RegexOptions.IgnoreCase);
+
+            var result = new List<Produse>();
+
+            foreach (var product in products)
+            {
+                var categorieContabila = categoriiContabile.FirstOrDefault(c => c.Id == product.CategorieContabila);
+                if (categorieContabila != null && !regex.IsMatch(categorieContabila.Denumire) && product.AfisareVanzare == true)
+                {
+                    result.Add(product);
+                }
+            }
+
             if (!result.Any())
             {
                 return NotFound("Nu au fost gasite produse cu filtrele precizate");
