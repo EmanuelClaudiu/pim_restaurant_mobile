@@ -100,6 +100,16 @@ namespace PIMRestaurantAPI.Controllers
                         productOnTable.ComandaEfectuata = true;
                         await _context.SaveChangesAsync();
                     }
+                    if (billItem.Mention != null)
+                    {
+                        _context.ProdusePeMasaMnetiunis.Add(new ProdusePeMasaMnetiuni()
+                        {
+                            Idprodus = productOnTable.Id,
+                            Mentiune = billItem.Mention,
+                            ComandaEfectuata = true
+                        });
+                        await _context.SaveChangesAsync();
+                    }
                 } else
                 {
                     return NotFound($"Bill Item with id {billItem.Id} not found.");
@@ -130,6 +140,8 @@ namespace PIMRestaurantAPI.Controllers
             {
                 var product = products.FirstOrDefault(product => product.Id == productOnTable.Idprodus);
                 var predefinedQuantities = predefinedQuantitiesList.FindAll(q => q.Idprodus == product.Id);
+                var mention = _context.ProdusePeMasaMnetiunis.FirstOrDefault(p_m => p_m.Idprodus == productOnTable.Id);
+
                 var billItemDTO = new BillItemDTO();
                 if (product != null)
                 {
@@ -144,6 +156,10 @@ namespace PIMRestaurantAPI.Controllers
                     if (discountPrice != null)
                     {
                         productDTO.Pret = discountPrice.PretNou;
+                    }
+                    if (mention != null)
+                    {
+                        billItemDTO.Mention = mention.Mentiune;
                     }
                     billItemDTO.Id = productOnTable.Id;
                     billItemDTO.Product = productDTO;
@@ -189,13 +205,15 @@ namespace PIMRestaurantAPI.Controllers
             var y = 24;
             var fontSize = 12;
             var lineHeight = 3;
+            var paperWidth = 28;
+
             g.DrawString("Comandă Nouă", new Font("Arial", fontSize), Brushes.Black, x, y);
             y += fontSize + lineHeight * 2;
             g.DrawString($"Ospătar: {waiterName}", new Font("Arial", fontSize), Brushes.Black, x, y);
             y += fontSize + lineHeight * 2;
-            g.DrawString($"Locație: {table.ToolTip}", new Font("Arial", fontSize), Brushes.Black, x, y);
+            g.DrawString($"Masa: {table.ToolTip}", new Font("Arial", fontSize), Brushes.Black, x, y);
             y += fontSize + lineHeight * 2;
-            g.DrawString($"Masa: {table.Name}", new Font("Arial", fontSize), Brushes.Black, x, y);
+            g.DrawString($"Scaun: {table.Name}", new Font("Arial", fontSize), Brushes.Black, x, y);
             y += fontSize + lineHeight * 2;
             g.DrawString($"Data/Ora: {time}", new Font("Arial", fontSize), Brushes.Black, x, y);
             y += fontSize + lineHeight * 2;
@@ -203,10 +221,21 @@ namespace PIMRestaurantAPI.Controllers
             y += fontSize + lineHeight * 2;
             foreach (var item in billItems)
             {
-                g.DrawString($"{item.Product.Denumire} - {item.Quantity} buc.", new Font("Arial", 12), Brushes.Black, x, y);
-                y += fontSize + (lineHeight * 3);
+                var toDraw = $"{item.Product.Denumire} - {item.Quantity} buc.";
+                var multipleLines = ChunksUpTo(toDraw, paperWidth);
+                foreach (var line in multipleLines)
+                {
+                    g.DrawString(line.ToString(), new Font("Arial", 12), Brushes.Black, x, y);
+                    y += fontSize + (lineHeight * 3);
+                }
             }
             g.DrawString("----------------------------------------", new Font("Arial", fontSize), Brushes.Black, x, y);
+        }
+
+        private IEnumerable<string> ChunksUpTo(string str, int maxChunkSize)
+        {
+            for (int i = 0; i < str.Length; i += maxChunkSize)
+                yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
         }
 
     }

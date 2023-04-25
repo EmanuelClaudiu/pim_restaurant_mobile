@@ -164,6 +164,8 @@ namespace PIMRestaurantAPI.Controllers
             {
                 var product = products.FirstOrDefault(product => product.Id == productOnTable.Idprodus);
                 var predefinedQuantities = predefinedQuantitiesList.FindAll(q => q.Idprodus == product.Id);
+                var mention = _context.ProdusePeMasaMnetiunis.FirstOrDefault(p_m => p_m.Idprodus == productOnTable.Id);
+
                 var billItemDTO = new BillItemDTO();
                 if (product != null)
                 {
@@ -178,6 +180,10 @@ namespace PIMRestaurantAPI.Controllers
                     if (discountPrice != null)
                     {
                         productDTO.Pret = discountPrice.PretNou;
+                    }
+                    if (mention != null)
+                    {
+                        billItemDTO.Mention = mention.Mentiune;
                     }
                     billItemDTO.Id = productOnTable.Id;
                     billItemDTO.Product = productDTO;
