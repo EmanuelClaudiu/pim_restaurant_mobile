@@ -27,7 +27,8 @@ namespace PIMRestaurantAPI.Controllers
             }
             var result = await productsOnTable.ToListAsync();
             var bill = await GetBillFromProductsOnTableAsync(result);
-            
+            bill.Reverse();
+
             return Ok(bill);
         }
 

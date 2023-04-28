@@ -13,11 +13,16 @@ namespace PIMRestaurantAPI.Controllers
     {
         private readonly PossistemContext _context;
         private readonly IMapper _mapper;
+        private IConfigurationRoot _appSettings;
 
         public MeseController(PossistemContext context, IMapper mapper)
         {
             this._context = context;
             this._mapper = mapper;
+
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+            this._appSettings = builder.Build();
         }
 
         [HttpGet]
@@ -178,13 +183,19 @@ namespace PIMRestaurantAPI.Controllers
         {
             // Create a new PrintDocument object
             PrintDocument pd = new PrintDocument();
+            var billPrintConfig = this._appSettings.GetSection("BillPrintConfig");
 
             // Set the printer name
             pd.PrinterSettings.PrinterName = printerName;
 
             // Set the page settings, such as paper size and orientation
             /*pd.DefaultPageSettings.PaperSize = new PaperSize("Thermal Printer Paper", 272, 1000);*/
-            pd.DefaultPageSettings.PaperSize = new PaperSize("Thermal Printer Paper", 1000, 272);
+            pd.DefaultPageSettings.PaperSize = new PaperSize(
+                "Thermal Printer Paper",
+                Int32.Parse(billPrintConfig.GetValue<string>("PaperHeight")),
+                272
+            );
+
             pd.DefaultPageSettings.Landscape = false;
 
             // Attach an event handler for the PrintPage event and pass arguments to it
@@ -201,11 +212,13 @@ namespace PIMRestaurantAPI.Controllers
         {
             // Draw the contents of the document to the printer graphics object
             Graphics g = e.Graphics;
+            var billPrintConfig = this._appSettings.GetSection("BillPrintConfig");
             var x = 16;
             var y = 24;
-            var fontSize = 12;
-            var lineHeight = 3;
-            var paperWidth = 28;
+            /*var dataSource = myConfig.GetValue<string>("DataSource");*/
+            var fontSize = Int32.Parse(billPrintConfig.GetValue<string>("FontSize"));
+            var lineHeight = Int32.Parse(billPrintConfig.GetValue<string>("LineHeight"));
+            var paperWidth = Int32.Parse(billPrintConfig.GetValue<string>("PaperWidth"));
 
             g.DrawString("Comandă Nouă", new Font("Arial", fontSize), Brushes.Black, x, y);
             y += fontSize + lineHeight * 2;
@@ -221,7 +234,7 @@ namespace PIMRestaurantAPI.Controllers
             y += fontSize + lineHeight * 2;
             foreach (var item in billItems)
             {
-                var toDraw = $"{item.Product.Denumire} - {item.Quantity} buc.";
+                var toDraw = $"{item.Product.Denumire}, ${item.Mention} - {item.Quantity} buc.";
                 var multipleLines = ChunksUpTo(toDraw, paperWidth);
                 foreach (var line in multipleLines)
                 {

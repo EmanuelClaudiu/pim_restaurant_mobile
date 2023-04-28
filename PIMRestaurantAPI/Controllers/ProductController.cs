@@ -56,7 +56,7 @@ namespace PIMRestaurantAPI.Controllers
 
             if (!result.Any())
             {
-                return NotFound("Nu au fost gasite produse cu filtrele precizate");
+                return Ok(new List<Produse>());
             }
             return Ok(result.Select(product =>
             {
@@ -76,7 +76,7 @@ namespace PIMRestaurantAPI.Controllers
                     return productDTO;
                 }
                 return productDTO;
-            }));
+            }).OrderBy(product => product.Denumire));
         }
 
         [HttpPost("{idProduct}/AddToBill/{idTable}")]

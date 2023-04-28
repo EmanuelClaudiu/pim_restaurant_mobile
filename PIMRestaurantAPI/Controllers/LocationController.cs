@@ -17,7 +17,10 @@ namespace PIMRestaurantAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<List<NomenclatorLocatie>>> GetLocations()
         {
-            return Ok(await context.NomenclatorLocaties.ToListAsync());
+            var locations = await context.NomenclatorLocaties.Where(location =>
+                context.Produses.Any(product => product.Locatie == location.Id)
+            ).ToListAsync();
+            return Ok(locations);
         }
     }
 }
